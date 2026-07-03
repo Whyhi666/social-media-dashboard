@@ -1,0 +1,6 @@
+{
+  "name": "多麦社媒营销执行看板",
+  "description": "社媒达人营销执行进度与审批待办看板",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
