@@ -1,141 +1,131 @@
-import React from "react";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
-import { WorkloadDataItem, WorkloadBarConfig } from "../types";
-import { EmptyState } from "./Skeleton";
-import { Users, Info } from "lucide-react";
+import React from 'react';
+import { TeamWorkload } from '../types';
 
 interface TeamWorkloadChartProps {
-  data: WorkloadDataItem[];
-  bars: WorkloadBarConfig[];
-  outOfScopeNames?: string[];
-  roleLabel?: string;
+  data: TeamWorkload[];
+  onTeamClick?: (team: TeamWorkload) => void;
 }
 
-export function TeamWorkloadChart({ data, bars, outOfScopeNames, roleLabel }: TeamWorkloadChartProps) {
-  const isAllOutOfScope = outOfScopeNames && outOfScopeNames.length > 0 && data.length === 0;
-
-  if (isAllOutOfScope) {
-    return (
-      <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm h-full flex flex-col">
-        <div className="mb-4">
-          <h3 className="text-sm font-semibold text-slate-800">团队负载分布</h3>
-          <p className="text-xs text-slate-500">团队各成员核心节点待办积压情况</p>
-        </div>
-        <EmptyState
-          icon={<Users className="w-8 h-8" />}
-          title="当前所选成员不在您的管辖范围内"
-          description={'请选择「全部成员」或本部门成员查看负载分布'}
-        />
-      </div>
-    );
-  }
-
+const TeamWorkloadChart: React.FC<TeamWorkloadChartProps> = ({ data, onTeamClick }) => {
   if (!data || data.length === 0) {
     return (
-      <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm h-full flex flex-col">
-        <div className="mb-4">
-          <h3 className="text-sm font-semibold text-slate-800">团队负载分布</h3>
-          <p className="text-xs text-slate-500">团队各成员核心节点待办积压情况</p>
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-4">团队负载</h3>
+        <div className="flex flex-col items-center justify-center py-12 text-gray-400 dark:text-gray-500">
+          <svg className="w-12 h-12 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+          <p className="text-sm">暂无团队数据</p>
         </div>
-        <EmptyState
-          icon={<Users className="w-8 h-8" />}
-          title="请选择成员查看负载"
-          description="在顶部成员筛选中勾选需要查看的团队成员"
-        />
       </div>
     );
   }
 
-  // 有数据但部分成员越权 → 在图表上方显示提示
-  const showPartialWarning = outOfScopeNames && outOfScopeNames.length > 0;
-
   return (
-    <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm h-full flex flex-col" key={`workload-${roleLabel || 'media'}`}>
-      <div className="mb-4">
-        <div className="flex items-center gap-2">
-          <h3 className="text-sm font-semibold text-slate-800">团队负载分布</h3>
-          {roleLabel && (
-            <span className="text-[10px] px-1.5 py-0.5 rounded-full font-medium bg-slate-100 text-slate-500">
-              {roleLabel}视角
-            </span>
-          )}
-        </div>
-        <p className="text-xs text-slate-500">团队各成员核心节点待办积压情况</p>
+    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 sm:p-6">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-base font-semibold text-gray-900 dark:text-white">团队负载</h3>
+        <span className="text-xs text-gray-400 dark:text-gray-500">{data.length} 个团队</span>
       </div>
-
-      {showPartialWarning && (
-        <div className="mb-3 flex items-start gap-2 px-3 py-2 bg-blue-50 border border-blue-100 rounded-lg text-xs">
-          <Info className="w-3.5 h-3.5 text-blue-500 mt-0.5 shrink-0" />
-          <span className="text-blue-700">
-            {outOfScopeNames!.length} 位非管辖成员（{outOfScopeNames!.join('、')}）未计入上图
-          </span>
-        </div>
-      )}
-
-      <div className="overflow-x-auto overflow-y-hidden pb-2 flex-1">
-        <div
-          style={{
-            width: `${Math.max(100, data.length * 60)}px`,
-            minWidth: "100%",
-            height: "100%",
-            minHeight: "250px",
-          }}
-        >
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              data={data}
-              layout="horizontal"
-              margin={{ top: 20, right: 0, left: -20, bottom: 5 }}
-            >
-              <CartesianGrid
-                strokeDasharray="3 3"
-                horizontal={true}
-                vertical={false}
-                stroke="#e2e8f0"
-              />
-              <XAxis
-                dataKey="name"
-                type="category"
-                fontSize={12}
-                tickLine={false}
-                axisLine={false}
-              />
-              <YAxis
-                type="number"
-                fontSize={12}
-                tickLine={false}
-                axisLine={false}
-              />
-              <Tooltip
-                contentStyle={{
-                  borderRadius: "8px",
-                  border: "none",
-                  boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
-                  backgroundColor: "#ffffff",
-                }}
-                cursor={{ fill: "#f8fafc" }}
-                itemSorter={(item) =>
-                  bars.findIndex((b) => b.key === item.dataKey)
-                }
-              />
-              {bars.map((bar, index) => (
-                <Bar
-                  key={bar.key}
-                  dataKey={bar.key}
-                  stackId="a"
-                  fill={bar.color}
-                  maxBarSize={40}
-                  radius={
-                    index === bars.length - 1
-                      ? [4, 4, 0, 0]
-                      : [0, 0, 0, 0]
-                  }
-                />
-              ))}
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {data.map((team) => (
+          <TeamCard key={team.teamId} team={team} onClick={onTeamClick} />
+        ))}
       </div>
     </div>
   );
+};
+
+interface TeamCardProps {
+  team: TeamWorkload;
+  onClick?: (team: TeamWorkload) => void;
 }
+
+const TeamCard: React.FC<TeamCardProps> = ({ team, onClick }) => {
+  const totalTasks = team.members.reduce((sum, m) => sum + m.totalTasks, 0);
+  const completedTasks = team.members.reduce((sum, m) => sum + m.completedTasks, 0);
+  const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+
+  return (
+    <button
+      onClick={() => onClick?.(team)}
+      className="text-left w-full p-3 rounded-lg border border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-700/30 hover:bg-gray-100 dark:hover:bg-gray-700/50 hover:border-gray-200 dark:hover:border-gray-600 transition-all active:scale-[0.98] group"
+    >
+      {/* 团队名 + 完成率 */}
+      <div className="flex items-center justify-between mb-2.5">
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-xs font-bold shadow-sm">
+            {team.teamName.charAt(0)}
+          </div>
+          <span className="text-sm font-medium text-gray-900 dark:text-white">
+            {team.teamName}
+          </span>
+        </div>
+        <span className={`text-xs font-semibold ${
+          completionRate >= 80 ? 'text-green-600 dark:text-green-400' :
+          completionRate >= 50 ? 'text-blue-600 dark:text-blue-400' :
+          'text-yellow-600 dark:text-yellow-400'
+        }`}>
+          {completionRate}%
+        </span>
+      </div>
+
+      {/* 进度条 */}
+      <div className="w-full h-1.5 bg-gray-200 dark:bg-gray-600 rounded-full mb-2.5 overflow-hidden">
+        <div
+          className={`h-full rounded-full transition-all duration-500 ${
+            completionRate >= 80 ? 'bg-green-400' :
+            completionRate >= 50 ? 'bg-blue-400' :
+            'bg-yellow-400'
+          }`}
+          style={{ width: `${completionRate}%` }}
+        />
+      </div>
+
+      {/* 成员头像堆叠 + 统计 */}
+      <div className="flex items-center justify-between">
+        <div className="flex -space-x-1.5">
+          {team.members.slice(0, 5).map((member) => (
+            member.avatar ? (
+              <img
+                key={member.userId}
+                src={member.avatar}
+                alt={member.name}
+                title={member.name}
+                className="w-6 h-6 rounded-full border-2 border-white dark:border-gray-800 object-cover"
+              />
+            ) : (
+              <div
+                key={member.userId}
+                title={member.name}
+                className="w-6 h-6 rounded-full border-2 border-white dark:border-gray-800 bg-gradient-to-br from-blue-300 to-blue-500 flex items-center justify-center text-[9px] text-white font-semibold"
+              >
+                {member.name.charAt(0)}
+              </div>
+            )
+          ))}
+          {team.members.length > 5 && (
+            <div className="w-6 h-6 rounded-full border-2 border-white dark:border-gray-800 bg-gray-200 dark:bg-gray-600 flex items-center justify-center text-[9px] text-gray-500 dark:text-gray-400 font-medium">
+              +{team.members.length - 5}
+            </div>
+          )}
+        </div>
+        <div className="flex items-center gap-2 text-[11px] text-gray-400 dark:text-gray-500">
+          <span>{totalTasks} 任务</span>
+          <span className="w-1 h-1 rounded-full bg-gray-300 dark:bg-gray-600" />
+          <span className="text-green-500">{completedTasks} 完成</span>
+        </div>
+      </div>
+
+      {/* 悬浮提示 */}
+      <div className="mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity text-[10px] text-blue-500 dark:text-blue-400 flex items-center gap-1">
+        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        点击查看成员详情
+      </div>
+    </button>
+  );
+};
+
+export default TeamWorkloadChart;
