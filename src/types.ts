@@ -58,3 +58,26 @@ export interface RecruitmentTask {
     pendingMyExpenseReview: number;
   };
 }
+
+/** 团队成员负载数据条目（用于 TeamWorkloadChart 水平堆叠柱状图） */
+export interface WorkloadDataItem {
+  id: string;
+  name: string;
+  [key: string]: string | number;
+}
+
+/** 负载图的柱配置（key + 颜色） */
+export interface WorkloadBarConfig {
+  key: string;
+  color: string;
+}
+
+/** 成员维度数据，包含个人的所有统计数据 */
+export interface MemberData {
+  influencerStats: InfluencerStats;
+  workflowStats: WorkflowStats;
+  workloadData: {
+    media: WorkloadDataItem;
+    marketing: WorkloadDataItem;
+  };
+}

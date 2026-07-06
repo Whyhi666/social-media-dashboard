@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { WorkflowStats } from '../types';
 import { cn } from '../lib/utils';
-import { AlertCircle, Clock, CheckCircle2, ArrowUpRight } from 'lucide-react';
+import { AlertCircle, Clock, CheckCircle2, ArrowUpRight, BarChart3 } from 'lucide-react';
 import { StageDetailModal } from './StageDetailModal';
+import { EmptyState } from './Skeleton';
 
 interface WorkflowPipelineProps {
   data: WorkflowStats;
@@ -80,6 +81,29 @@ export function WorkflowPipeline({ data, personalMode = false, role = 'media' }:
   };
 
   const isMedia = role === 'media';
+
+  // 总积压数（用于判断是否空态）
+  const totalBacklog =
+    data.pendingMarketApprovalLeads + data.pendingMarketApprovalInfluencers +
+    data.approvedPendingQuote + data.quotedPendingApproval +
+    data.approvedPendingCooperation +
+    data.confirmedPendingExecutionWaitDraft + data.confirmedPendingExecutionResubmit +
+    data.pendingMyReview + data.pendingOthersReview +
+    data.confirmedPendingExecutionFinalized + data.startedPendingCompletion +
+    data.pendingExpenseGeneration + data.pendingMyExpenseReview +
+    data.pendingOthersExpenseReview + data.pendingPayment;
+
+  if (totalBacklog === 0) {
+    return (
+      <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+        <EmptyState
+          icon={<BarChart3 className="w-8 h-8" />}
+          title="当前暂无积压待办"
+          description="所有节点均无待处理事项，团队运转顺畅"
+        />
+      </div>
+    );
+  }
   
   // 简化的文案
   const labels = {
@@ -124,6 +148,7 @@ export function WorkflowPipeline({ data, personalMode = false, role = 'media' }:
         <div className="flex items-center gap-3 mb-5">
           <div className="w-7 h-7 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-sm font-bold shadow-sm border border-blue-200">1</div>
           <h3 className="font-semibold text-slate-800 text-base">投放前</h3>
+          <span className="text-[10px] text-slate-400 font-mono hidden sm:inline">报价与审批</span>
           <div className="h-px bg-slate-200 flex-1 ml-4"></div>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -134,12 +159,21 @@ export function WorkflowPipeline({ data, personalMode = false, role = 'media' }:
         </div>
       </div>
 
+      {/* 阶段间箭头 */}
+      <div className="flex items-center justify-center gap-1 text-slate-300">
+        <div className="h-px w-12 bg-slate-200"></div>
+        <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+        </svg>
+        <div className="h-px w-12 bg-slate-200"></div>
+      </div>
       {/* 阶段 2: 投放中 */}
       <div className="relative bg-slate-50/50 rounded-xl p-6 border border-slate-200 shadow-sm">
         <div className="absolute -top-6 left-9 w-px h-6 bg-slate-300 border-l border-dashed border-slate-400"></div>
         <div className="flex items-center gap-3 mb-5">
           <div className="w-7 h-7 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-sm font-bold shadow-sm border border-indigo-200">2</div>
           <h3 className="font-semibold text-slate-800 text-base">投放中</h3>
+          <span className="text-[10px] text-slate-400 font-mono hidden sm:inline">执行与审稿</span>
           <div className="h-px bg-slate-200 flex-1 ml-4"></div>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
@@ -152,12 +186,21 @@ export function WorkflowPipeline({ data, personalMode = false, role = 'media' }:
         </div>
       </div>
 
+      {/* 阶段间箭头 */}
+      <div className="flex items-center justify-center gap-1 text-slate-300">
+        <div className="h-px w-12 bg-slate-200"></div>
+        <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+        </svg>
+        <div className="h-px w-12 bg-slate-200"></div>
+      </div>
       {/* 阶段 3: 投放后 */}
       <div className="relative bg-slate-50/50 rounded-xl p-6 border border-slate-200 shadow-sm">
         <div className="absolute -top-6 left-9 w-px h-6 bg-slate-300 border-l border-dashed border-slate-400"></div>
         <div className="flex items-center gap-3 mb-5">
           <div className="w-7 h-7 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-sm font-bold shadow-sm border border-emerald-200">3</div>
           <h3 className="font-semibold text-slate-800 text-base">投放后</h3>
+          <span className="text-[10px] text-slate-400 font-mono hidden sm:inline">结算与付款</span>
           <div className="h-px bg-slate-200 flex-1 ml-4"></div>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

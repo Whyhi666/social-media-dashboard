@@ -1,6 +1,7 @@
 import React from 'react';
 import { cn } from '../lib/utils';
 import { LucideIcon } from 'lucide-react';
+import { Skeleton } from './Skeleton';
 
 interface StatCardProps {
   title: string;
@@ -12,9 +13,19 @@ interface StatCardProps {
   };
   highlight?: boolean;
   className?: string;
+  /** 加载态 */
+  loading?: boolean;
 }
 
-export function StatCard({ title, value, icon: Icon, trend, highlight, className }: StatCardProps) {
+export function StatCard({ title, value, icon: Icon, trend, highlight, className, loading }: StatCardProps) {
+  if (loading) {
+    return (
+      <div className={cn("p-4 rounded-xl border bg-white shadow-sm", className)}>
+        <Skeleton variant="card" />
+      </div>
+    );
+  }
+
   return (
     <div className={cn(
       "p-4 rounded-xl border bg-card text-card-foreground shadow-sm flex flex-col gap-2 transition-all",

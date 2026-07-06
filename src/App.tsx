@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { ViewMode } from './types';
-import { 
+import {
+  allMemberIds,
   mockOrganization,
-  mockInfluencerStatsSelf, 
-  mockInfluencerStatsTeam, 
-  mockWorkflowStatsSelf, 
+  mockInfluencerStatsSelf,
+  mockInfluencerStatsTeam,
+  mockWorkflowStatsSelf,
   mockWorkflowStatsTeam,
   mockTasks,
-  mockTeamMembers,
-  mockWorkflowStatsU2,
-  mockWorkflowStatsU3,
-  mockInfluencerStatsU2,
-  mockInfluencerStatsU3
+  getAggregatedInfluencerStats,
+  getAggregatedWorkflowStats,
+  getWorkloadData,
+  getWorkloadBars,
 } from './mockData';
 import { StatCard } from './components/StatCard';
 import { WorkflowPipeline } from './components/WorkflowPipeline';
@@ -20,35 +20,60 @@ import { MemberSelect } from './components/MemberSelect';
 import { TeamWorkloadChart } from './components/TeamWorkloadChart';
 import { TrendChart } from './components/TrendChart';
 import { PersonalMemo } from './components/PersonalMemo';
-import { Users, User, Mail, Database, CheckCircle, BarChart3, LayoutDashboard, Target, RefreshCw, Activity } from 'lucide-react';
+import { Users, User, Mail, Database, CheckCircle, BarChart3, LayoutDashboard, Target, RefreshCw, Activity, UserPlus, Send, Inbox, TrendingUp, Handshake, Search, X } from 'lucide-react';
 import { cn } from './lib/utils';
 
 export default function App() {
   const [viewMode, setViewMode] = useState<ViewMode>('self');
   const [role, setRole] = useState<'media' | 'marketing'>('media');
-  const [selectedMemberIds, setSelectedMemberIds] = useState<string[]>(mockOrganization.flatMap(d => d.children.map(c => c.id)));
+  const [selectedMemberIds, setSelectedMemberIds] = useState<string[]>([...allMemberIds]);
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
   const [isRefreshing, setIsRefreshing] = useState(false);
-  
-  let isPersonalMode = viewMode === 'self';
-  let influencerStats = mockInfluencerStatsSelf;
-  let workflowStats = mockWorkflowStatsSelf;
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [refreshFeedback, setRefreshFeedback] = useState(false);
 
-  if (viewMode === 'team') {
-    if (selectedMemberIds.length === mockOrganization.flatMap(d => d.children.map(c => c.id)).length) {
-      influencerStats = mockInfluencerStatsTeam;
-      workflowStats = mockWorkflowStatsTeam;
-    } else if (selectedMemberIds.length === 1 && selectedMemberIds[0] === 'u1') {
-      influencerStats = mockInfluencerStatsSelf;
-      workflowStats = mockWorkflowStatsSelf;
-    } else if (selectedMemberIds.length === 1 && selectedMemberIds[0] === 'u2') {
-      influencerStats = mockInfluencerStatsU2;
-      workflowStats = mockWorkflowStatsU2;
-    } else if (selectedMemberIds.length === 1 && selectedMemberIds[0] === 'u3') {
-      influencerStats = mockInfluencerStatsU3;
-      workflowStats = mockWorkflowStatsU3;
-    }
-  }
+  // 模拟当前登录用户（张三，媒介部）
+  const currentUserId = 'u1';
+  const currentUserDept = mockOrganization.find(d => d.children.some(c => c.id === currentUserId));
+  const teamMemberIds = currentUserDept?.children.map(c => c.id) || [];
+
+  // 计算选中成员中非管辖范围的成员
+  const outOfScopeInfo = useMemo(() => {
+    const outOfScopeIds = selectedMemberIds.filter(id => !teamMemberIds.includes(id));
+    const names = outOfScopeIds.map(id => {
+      for (const dept of mockOrganization) {
+        const m = dept.children.find(c => c.id === id);
+        if (m) return `${m.name}（${dept.name}）`;
+      }
+      return '';
+    }).filter(Boolean);
+    return { ids: outOfScopeIds, names, count: outOfScopeIds.length };
+  }, [selectedMemberIds, teamMemberIds]);
+
+  // 模拟首次加载
+  useEffect(() => {
+    const timer = setTimeout(() => setIsInitialLoading(false), 600);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const isPersonalMode = viewMode === 'self';
+
+  // 根据当前视图和选中成员计算数据
+  const influencerStats = isPersonalMode
+    ? mockInfluencerStatsSelf
+    : (selectedMemberIds.length === allMemberIds.length && allMemberIds.every(id => selectedMemberIds.includes(id)))
+      ? mockInfluencerStatsTeam
+      : getAggregatedInfluencerStats(selectedMemberIds);
+
+  const workflowStats = isPersonalMode
+    ? mockWorkflowStatsSelf
+    : (selectedMemberIds.length === allMemberIds.length && allMemberIds.every(id => selectedMemberIds.includes(id)))
+      ? mockWorkflowStatsTeam
+      : getAggregatedWorkflowStats(selectedMemberIds);
+
+  // 团队负载图数据
+  const workloadData = isPersonalMode ? [] : getWorkloadData(selectedMemberIds, role);
+  const workloadBars = getWorkloadBars(role);
 
   const handleRefresh = () => {
     setIsRefreshing(true);
@@ -56,6 +81,8 @@ export default function App() {
     setTimeout(() => {
       setLastUpdated(new Date());
       setIsRefreshing(false);
+      setRefreshFeedback(true);
+      setTimeout(() => setRefreshFeedback(false), 2000);
     }, 800);
   };
 
@@ -81,7 +108,12 @@ export default function App() {
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
               </span>
               <span className="font-mono">{formatTime(lastUpdated)}</span>
-              <button 
+              {refreshFeedback && (
+                <span className="text-emerald-600 font-medium animate-in fade-in slide-in-from-left-1 duration-300">
+                  已刷新
+                </span>
+              )}
+              <button
                 onClick={handleRefresh}
                 className="ml-1 text-slate-400 hover:text-slate-800 transition-colors p-0.5 rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                 title="刷新数据"
@@ -95,7 +127,7 @@ export default function App() {
           <div className="flex justify-center flex-1">
             <div className="flex bg-slate-100/80 p-1 rounded-lg border border-slate-200 shadow-inner">
               <button
-                onClick={() => { setViewMode('self'); setSelectedMemberIds(mockOrganization.flatMap(d => d.children.map(c => c.id))); }}
+                onClick={() => { setViewMode('self'); setSelectedMemberIds([...allMemberIds]); }}
                 className={cn(
                   "flex items-center gap-2 px-5 py-1.5 rounded-md text-sm font-medium transition-all duration-200 ease-in-out",
                   viewMode === 'self' ? "bg-white shadow text-blue-700" : "text-slate-500 hover:text-slate-800"
@@ -105,7 +137,7 @@ export default function App() {
                 我的工作台
               </button>
               <button
-                onClick={() => { setViewMode('team'); setSelectedMemberIds(mockOrganization.flatMap(d => d.children.map(c => c.id))); }}
+                onClick={() => { setViewMode('team'); setSelectedMemberIds([...allMemberIds]); }}
                 className={cn(
                   "flex items-center gap-2 px-5 py-1.5 rounded-md text-sm font-medium transition-all duration-200 ease-in-out",
                   viewMode === 'team' ? "bg-white shadow text-blue-700" : "text-slate-500 hover:text-slate-800"
@@ -136,7 +168,7 @@ export default function App() {
               viewMode === 'team' ? "opacity-100 translate-x-0" : "opacity-0 translate-x-4 pointer-events-none"
             )}>
               <span className="text-sm text-slate-500 font-medium">成员筛选:</span>
-              <MemberSelect selectedIds={selectedMemberIds} onChange={setSelectedMemberIds} />
+              <MemberSelect selectedIds={selectedMemberIds} onChange={setSelectedMemberIds} currentUserId={currentUserId} />
             </div>
           </div>
         </div>
@@ -151,51 +183,87 @@ export default function App() {
             <h2 className="text-lg font-semibold">资源池与触达数据</h2>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            <StatCard 
-              title="线索总量" 
-              value={influencerStats.totalLeads.toLocaleString()} 
+            <StatCard
+              title="线索总量"
+              value={influencerStats.totalLeads.toLocaleString()}
+              icon={Database}
+              loading={isInitialLoading}
             />
-            <StatCard 
-              title="达人总量" 
-              value={influencerStats.totalInfluencers.toLocaleString()} 
+            <StatCard
+              title="达人总量"
+              value={influencerStats.totalInfluencers.toLocaleString()}
+              icon={Users}
+              loading={isInitialLoading}
             />
-            <StatCard 
-              title="累计合作" 
-              value={influencerStats.confirmedCooperations.toLocaleString()} 
+            <StatCard
+              title="累计合作"
+              value={influencerStats.confirmedCooperations.toLocaleString()}
+              icon={Handshake}
+              loading={isInitialLoading}
             />
-            <StatCard 
-              title="本月新增合作" 
-              value={influencerStats.confirmedThisMonth.toLocaleString()} 
+            <StatCard
+              title="本月新增合作"
+              value={influencerStats.confirmedThisMonth.toLocaleString()}
+              icon={TrendingUp}
               trend={{ value: 12.5, isPositive: true }}
+              loading={isInitialLoading}
             />
-            <StatCard 
-              title="本月新增线索" 
-              value={influencerStats.newLeadsThisMonth.toLocaleString()} 
+            <StatCard
+              title="本月新增线索"
+              value={influencerStats.newLeadsThisMonth.toLocaleString()}
+              icon={Activity}
+              trend={{ value: 8.3, isPositive: true }}
+              loading={isInitialLoading}
             />
-            <StatCard 
-              title="本月新增达人" 
-              value={influencerStats.newInfluencersThisMonth.toLocaleString()} 
+            <StatCard
+              title="本月新增达人"
+              value={influencerStats.newInfluencersThisMonth.toLocaleString()}
+              icon={UserPlus}
+              trend={{ value: 2.1, isPositive: false }}
+              loading={isInitialLoading}
             />
-            <StatCard 
-              title="本月发送邮件" 
-              value={influencerStats.emailsSentThisMonth.toLocaleString()} 
+            <StatCard
+              title="本月发送邮件"
+              value={influencerStats.emailsSentThisMonth.toLocaleString()}
+              icon={Send}
+              trend={{ value: 15.7, isPositive: true }}
+              loading={isInitialLoading}
             />
-            <StatCard 
-              title="本月接收邮件" 
-              value={influencerStats.emailsReceivedThisMonth.toLocaleString()} 
+            <StatCard
+              title="本月接收邮件"
+              value={influencerStats.emailsReceivedThisMonth.toLocaleString()}
+              icon={Inbox}
+              loading={isInitialLoading}
             />
-            <StatCard 
-              title="本月触达邮箱" 
-              value={influencerStats.contactsEmailedThisMonth.toLocaleString()} 
+            <StatCard
+              title="本月触达邮箱"
+              value={influencerStats.contactsEmailedThisMonth.toLocaleString()}
+              icon={Mail}
+              loading={isInitialLoading}
             />
           </div>
         </section>
 
         {/* 图表概览区 */}
+        {!isPersonalMode && outOfScopeInfo.count > 0 && (
+          <div className="flex items-start gap-2.5 px-4 py-3 bg-blue-50 border border-blue-200 rounded-lg text-sm shadow-sm">
+            <div className="w-5 h-5 rounded-full bg-blue-200 text-blue-700 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">i</div>
+            <div className="text-blue-800">
+              <span className="font-medium">筛选提示：</span>
+              当前选中了 {outOfScopeInfo.count} 位非本部门成员（{outOfScopeInfo.names.join('、')}），
+              其数据不在您的管辖范围内，部分图表可能显示为空。
+            </div>
+          </div>
+        )}
         <section className="grid gap-4 min-h-[320px] grid-cols-1 lg:grid-cols-2">
-          <TrendChart />
+          <TrendChart role={role} viewMode={viewMode} loading={isInitialLoading} />
           {!isPersonalMode ? (
-            <TeamWorkloadChart role={role} selectedMemberIds={selectedMemberIds} />
+            <TeamWorkloadChart
+              data={workloadData}
+              bars={workloadBars}
+              roleLabel={role === 'media' ? '媒介' : '市场'}
+              outOfScopeNames={outOfScopeInfo.count > 0 ? outOfScopeInfo.names : undefined}
+            />
           ) : (
             <PersonalMemo />
           )}
