@@ -4,15 +4,16 @@
 
 ## 🌟 核心特性
 - **双视角无缝切换**：支持“我的工作台”（个人聚焦）和“团队全局视图”（管理统筹）。
-- **双角色适配**：支持“媒介”与“市场”业务流转节点的动态适配。
-- **自定义组织架构筛选**：原生级别的多层级人员筛选下拉组件，支持部门全选、半选。
-- **响应式负载图表**：自适应的横向滚动堆叠柱状图，清晰呈现团队工作流瓶颈。
-- **动态业务漏斗**：实时监控从线索提报到财务打款的每一环转化率。
+- **双角色适配**：支持“媒介”与“市场”业务流转节点的动态适配，StatCard 按岗位差异化展示。
+- **组织架构筛选**：按角色显示对应部门成员，支持全选/半选，权限提示独立展示。
+- **响应式负载图表**：自适应横向滚动的堆叠柱状图，清晰呈现团队工作流瓶颈。
+- **业务流转链路**：三阶段（投放前/中/后）链路，区分我处理/待对方，点击节点查看积压明细。
+- **招募任务进度**：漏斗数据（提报/报价/确认合作/执行）+ 我的待办/本组待办展开。
 
 ## 🛠 技术栈
-- **核心框架**: React 18 + Vite
+- **核心框架**: React 19 + Vite
 - **开发语言**: TypeScript
-- **CSS 框架**: Tailwind CSS (原子化设计)
+- **CSS 框架**: Tailwind CSS (原子化设计，亮色 slate 主题)
 - **图表库**: Recharts
 - **图标库**: Lucide React
 
@@ -35,18 +36,27 @@ npm install
 npm run dev
 ```
 
-### 构建生产版本
+### 构建与检查
 ```bash
-npm run build
+npm run build    # 生产构建
+npm run lint     # TypeScript 类型检查
 ```
 
 ## 📁 目录结构说明
-- `/src/components` - 核心业务与 UI 组件 (如 `TeamWorkloadChart`, `MemberSelect`, `WorkflowPipeline`)
-- `/src/mockData.ts` - 包含组织架构与统计数据的 Mock 结构
-- `/src/types.ts` - TypeScript 类型定义文件
-- `/src/App.tsx` - 主应用入口与全局状态管理 (`viewMode`, `role`, `selectedMemberIds`)
+- `/src/components` - 核心业务组件
+  - `StatCard` 资源池与触达数据（按岗位差异化）
+  - `TrendChart` 执行趋势（7d/14d/30d）
+  - `TeamWorkloadChart` 团队负载堆叠柱状图
+  - `WorkflowPipeline` + `StageDetailModal` 业务流转链路 + 节点明细
+  - `TaskProgressTable` 招募任务进度
+  - `MemberSelect` 组织架构成员筛选
+  - `PersonalMemo` 工作备忘
+  - `Skeleton` 骨架屏/空状态/错误状态
+- `/src/mockData.ts` - Mock 数据与聚合函数
+- `/src/types.ts` - TypeScript 类型定义
+- `/src/App.tsx` - 主应用入口（viewMode/role/selectedMemberIds 三态驱动）
 - `/PRD.md` - 产品需求说明文档
 - `/PROJECT_HANDOVER.md` - 项目核心设计与组件开发约束文档（接手必读）
 
 ## ⚠️ 贡献与开发须知
-如果您（或 AI 大模型）准备继续开发本项目，**请务必优先阅读 [`PROJECT_HANDOVER.md`](./PROJECT_HANDOVER.md)**，其中包含了项目核心架构的约束与防坑指南，特别是关于 `MemberSelect` 多选逻辑和图表自适应滚动的特定实现。
+如果您（或 AI 大模型）准备继续开发本项目，**请务必优先阅读 [`PROJECT_HANDOVER.md`](./PROJECT_HANDOVER.md)**，其中包含了项目核心架构的约束与防坑指南，特别是关于 `MemberSelect` 多选逻辑、`TeamWorkloadChart` 自适应滚动、`WorkflowPipeline` 三阶段链路等组件的特定实现约束。

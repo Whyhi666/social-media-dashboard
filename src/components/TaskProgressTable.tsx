@@ -89,8 +89,8 @@ export function TaskProgressTable({ tasks, personalMode = true }: TaskProgressTa
               <th className="p-4 py-3">项目名称</th>
               <th className="p-4 py-3 text-center">距截止日期</th>
               <th className="p-4 py-3 min-w-[200px]">执行进度 (完成 / 目标)</th>
-              <th className="p-4 py-3 hidden md:table-cell">漏斗数据 (待提报/待报价/待确认/待执行)</th>
-              {personalMode && <th className="p-4 py-3 text-center">我的待办</th>}
+              <th className="p-4 py-3 hidden md:table-cell">漏斗数据 (提报/报价/确认合作/执行)</th>
+              <th className="p-4 py-3 text-center">{personalMode ? '我的待办' : '本组待办'}</th>
               <th className="p-4 py-3 w-[100px] text-right">操作</th>
             </tr>
           </thead>
@@ -104,7 +104,7 @@ export function TaskProgressTable({ tasks, personalMode = true }: TaskProgressTa
             )}
             {filteredTasks.length === 0 ? (
               <tr>
-                <td colSpan={personalMode ? 8 : 7} className="p-8 text-center text-slate-500">
+                <td colSpan={8} className="p-8 text-center text-slate-500">
                   <div className="flex flex-col items-center justify-center gap-2">
                     <Target className="w-8 h-8 text-slate-300 mb-2" />
                     <p className="text-base font-medium text-slate-600">暂无匹配的任务</p>
@@ -160,62 +160,49 @@ export function TaskProgressTable({ tasks, personalMode = true }: TaskProgressTa
                 </td>
                 <td className="p-4 hidden md:table-cell">
                   <div className="flex items-center gap-2 text-xs font-mono text-slate-500">
-                    <span className="px-1.5 py-0.5 bg-slate-100 rounded" title="待审批提报">{task.stages.pendingSubmitApproval}</span>
+                    <span className="px-1.5 py-0.5 bg-slate-100 rounded" title="提报">{task.stages.pendingSubmitApproval}</span>
                     <span className="text-slate-300">/</span>
-                    <span className="px-1.5 py-0.5 bg-slate-100 rounded" title="待审批报价">{task.stages.pendingQuoteApproval}</span>
+                    <span className="px-1.5 py-0.5 bg-slate-100 rounded" title="报价">{task.stages.pendingQuoteApproval}</span>
                     <span className="text-slate-300">/</span>
-                    <span className="px-1.5 py-0.5 bg-blue-50 text-blue-700 rounded" title="待确认合作">{task.stages.pendingConfirmCooperation}</span>
+                    <span className="px-1.5 py-0.5 bg-blue-50 text-blue-700 rounded" title="确认合作">{task.stages.pendingConfirmCooperation}</span>
                     <span className="text-slate-300">/</span>
-                    <span className="px-1.5 py-0.5 bg-emerald-50 text-emerald-700 rounded" title="待开始执行">{task.stages.pendingStartExecution}</span>
+                    <span className="px-1.5 py-0.5 bg-emerald-50 text-emerald-700 rounded" title="执行">{task.stages.pendingStartExecution}</span>
                   </div>
                 </td>
-                {personalMode && (
-                  <td className="p-4 text-center">
-                    {task.myActionableItems.total > 0 ? (
-                      <div className="inline-flex items-center justify-center min-w-[24px] h-6 px-2 rounded-full bg-red-100 text-red-700 font-bold font-mono text-xs">
-                        {task.myActionableItems.total}
-                      </div>
-                    ) : (
-                      <span className="text-slate-400 font-mono text-xs">-</span>
-                    )}
-                  </td>
-                )}
-                <td className="p-4 text-right">
-                  {personalMode ? (
-                    <button 
-                      onClick={() => toggleExpand(task.id)}
-                      className="px-3 py-1.5 text-xs font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md transition-colors flex items-center justify-center gap-1 ml-auto"
-                    >
-                      {expandedId === task.id ? '收起' : '待办'}
-                      {expandedId === task.id ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
-                    </button>
+                <td className="p-4 text-center">
+                  {task.myActionableItems.total > 0 ? (
+                    <div className="inline-flex items-center justify-center min-w-[24px] h-6 px-2 rounded-full bg-red-100 text-red-700 font-bold font-mono text-xs">
+                      {task.myActionableItems.total}
+                    </div>
                   ) : (
-                    <a 
-                      href="#" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="px-3 py-1.5 text-xs font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md transition-colors inline-flex items-center justify-center gap-1"
-                    >
-                      详情 <ArrowUpRight className="w-3 h-3" />
-                    </a>
+                    <span className="text-slate-400 font-mono text-xs">-</span>
                   )}
+                </td>
+                <td className="p-4 text-right">
+                  <button
+                    onClick={() => toggleExpand(task.id)}
+                    className="px-3 py-1.5 text-xs font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md transition-colors flex items-center justify-center gap-1 ml-auto"
+                  >
+                    {expandedId === task.id ? '收起' : '待办'}
+                    {expandedId === task.id ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                  </button>
                 </td>
               </tr>
               {/* Expanded Actionable Items Row */}
-              {personalMode && expandedId === task.id && (
+              {expandedId === task.id && (
                 <tr className="bg-slate-50/80 shadow-inner">
                   <td colSpan={8} className="p-0 border-b border-slate-200">
                     <div className="px-6 py-5 ml-4 border-l-2 border-amber-400 bg-white shadow-sm my-3 mr-4 rounded-r-md">
                       <div className="flex items-center gap-6 text-sm">
                          <div className="flex items-center gap-2 text-amber-800 font-semibold">
                            <AlertCircle className="w-4 h-4" />
-                           该任务下需您处理：
+                           {personalMode ? '该任务下需您处理：' : '该任务下本组待处理：'}
                          </div>
                          {task.myActionableItems.total > 0 ? (
                            <div className="flex gap-4">
                               {task.myActionableItems.pendingMyReview > 0 && (
                                   <div className="flex items-center gap-3 bg-white px-4 py-2.5 rounded-md border border-amber-200 shadow-sm transition-all hover:shadow hover:border-amber-300">
-                                     <span className="text-slate-600 text-xs font-medium">待我审稿</span>
+                                     <span className="text-slate-600 text-xs font-medium">{personalMode ? '待我审稿' : '本组待审稿'}</span>
                                      <span className="font-mono font-bold text-amber-700 text-base">{task.myActionableItems.pendingMyReview}</span>
                                      <a href="#" target="_blank" rel="noopener noreferrer" className="ml-2 px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 rounded text-xs font-medium transition-colors flex items-center gap-1 group">
                                        去审稿 <ArrowUpRight className="w-3 h-3 text-amber-500 group-hover:text-amber-700" />
@@ -233,7 +220,7 @@ export function TaskProgressTable({ tasks, personalMode = true }: TaskProgressTa
                               )}
                            </div>
                          ) : (
-                           <span className="text-slate-500 text-xs bg-slate-100 px-3 py-1.5 rounded-md">暂无需要您处理的节点事项</span>
+                           <span className="text-slate-500 text-xs bg-slate-100 px-3 py-1.5 rounded-md">{personalMode ? '暂无需要您处理的节点事项' : '暂无本组待处理事项'}</span>
                          )}
                       </div>
                     </div>

@@ -1,4 +1,4 @@
-import { InfluencerStats, WorkflowStats, RecruitmentTask, WorkloadDataItem, WorkloadBarConfig } from './types';
+import { InfluencerStats, WorkflowStats, RecruitmentTask, WorkloadDataItem, WorkloadBarConfig, ExecutionStats } from './types';
 
 // ============================================================
 // 个人 & 团队聚合数据
@@ -68,6 +68,22 @@ export const mockWorkflowStatsTeam: WorkflowStats = {
   pendingMyExpenseReview: 5,
   pendingOthersExpenseReview: 14,
   pendingPayment: 22,
+};
+
+// ============================================================
+// 执行与招募补充指标（StatCard 合作转化/资源池用，按 self/team 区分）
+// ============================================================
+
+export const mockExecutionStatsSelf: ExecutionStats = {
+  totalExecutions: 820,
+  newExecutionsThisMonth: 45,
+  newRecruitmentTasksThisMonth: 2,
+};
+
+export const mockExecutionStatsTeam: ExecutionStats = {
+  totalExecutions: 3200,
+  newExecutionsThisMonth: 180,
+  newRecruitmentTasksThisMonth: 8,
 };
 
 // ============================================================

@@ -12,6 +12,13 @@ export interface InfluencerStats {
   confirmedThisMonth: number;
 }
 
+/** 执行与招募补充指标（StatCard 合作转化/资源池用，按 self/team 区分） */
+export interface ExecutionStats {
+  totalExecutions: number; // 累计执行次数
+  newExecutionsThisMonth: number; // 本月新增执行
+  newRecruitmentTasksThisMonth: number; // 本月新增招募任务
+}
+
 export interface WorkflowStats {
   // 提报与报价
   pendingMarketApprovalLeads: number;
