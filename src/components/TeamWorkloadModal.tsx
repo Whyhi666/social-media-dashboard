@@ -20,7 +20,7 @@ const TeamWorkloadModal: React.FC<TeamWorkloadModalProps> = ({ team, onClose }) 
       />
 
       {/* 弹窗 */}
-      <div className="relative w-full max-w-lg bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden animate-scale-in">
+      <div className="relative w-full max-w-lg mx-2 sm:mx-0 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden animate-scale-in max-h-[90vh] flex flex-col">
         {/* 头部 */}
         <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-700">
           <div className="flex items-center justify-between">
@@ -77,7 +77,7 @@ const TeamWorkloadModal: React.FC<TeamWorkloadModalProps> = ({ team, onClose }) 
         </div>
 
         {/* 成员列表 */}
-        <div className="px-6 py-3 max-h-[400px] overflow-y-auto">
+        <div className="px-4 sm:px-6 py-3 overflow-y-auto flex-1">
           <h4 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
             成员工作量
           </h4>
@@ -89,7 +89,7 @@ const TeamWorkloadModal: React.FC<TeamWorkloadModalProps> = ({ team, onClose }) 
         </div>
 
         {/* 底部 */}
-        <div className="px-6 py-3 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 flex justify-end">
+        <div className="px-4 sm:px-6 py-3 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 flex justify-end">
           <button
             onClick={onClose}
             className="px-4 py-1.5 text-xs font-medium text-gray-600 bg-white dark:bg-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"

@@ -1,215 +1,176 @@
 import React, { useState } from 'react';
-import { WorkflowStats } from '../types';
-import { cn } from '../lib/utils';
-import { AlertCircle, Clock, CheckCircle2, ArrowUpRight, BarChart3 } from 'lucide-react';
-import { StageDetailModal } from './StageDetailModal';
-import { EmptyState } from './Skeleton';
+import { Stage } from '../types';
+import StageDetailModal from './StageDetailModal';
 
 interface WorkflowPipelineProps {
-  data: WorkflowStats;
-  personalMode?: boolean;
-  role?: 'media' | 'marketing';
+  stages: Stage[];
 }
 
-interface StageCardProps {
-  title: string;
-  count: number;
-  waitingStatus?: 'me' | 'others' | 'none'; // 代表需要谁处理
-  onClick?: () => void;
-  personalMode?: boolean;
-}
+const STAGE_ORDER = ['待执行', '执行中', '已完成', '延期'];
 
-function StageCard({ title, count, waitingStatus = 'none', onClick, personalMode = true }: StageCardProps) {
-  const isMe = waitingStatus === 'me';
-  const isOthers = waitingStatus === 'others';
-  const isClickable = count > 0;
-  
-  const content = (
-    <div 
-      className={cn(
-        "flex flex-col p-3 rounded-lg border text-sm transition-all relative overflow-hidden group",
-        isMe && count > 0
-          ? "border-amber-400 bg-amber-50 shadow-sm hover:border-amber-500 hover:bg-amber-100/80 cursor-pointer" 
-          : count > 0
-            ? "border-gray-200 bg-white hover:border-gray-300 hover:bg-slate-50 cursor-pointer"
-            : "border-gray-200 bg-white"
-      )}
-      onClick={isClickable ? onClick : undefined}
-    >
-      {isClickable && (
-        <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-          <ArrowUpRight className={cn(
-            "w-4 h-4", 
-            isMe ? "text-amber-600" : "text-slate-400"
-          )} />
-        </div>
-      )}
+const WorkflowPipeline: React.FC<WorkflowPipelineProps> = ({ stages }) => {
+  const [selectedStage, setSelectedStage] = useState<Stage | null>(null);
 
-      <div className="flex items-center justify-between mb-1 gap-1">
-        <span className={cn("font-medium truncate", isMe && count > 0 ? "text-amber-900" : "text-gray-600")} title={title}>
-          {title}
-        </span>
-        {count > 0 && isMe && (
-          <span className="shrink-0 text-[10px] px-1.5 py-0.5 rounded bg-amber-200/50 text-amber-800 font-medium">{personalMode ? "待我处理" : "待本组处理"}</span>
-        )}
-        {count > 0 && isOthers && (
-          <span className="shrink-0 text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 font-medium">待对方处理</span>
-        )}
-      </div>
-      <span className={cn("text-2xl font-bold font-mono tracking-tight", isMe && count > 0 ? "text-amber-700" : "text-gray-900")}>
-        {count}
-      </span>
-    </div>
-  );
+  /* 分组 */
+  const grouped = STAGE_ORDER.map((status) => ({
+    status,
+    stages: stages.filter((s) => s.status === status),
+  }));
 
-  if (isClickable) {
+  if (!stages || stages.length === 0) {
     return (
-      <button onClick={onClick} className="block w-full text-left outline-none focus:ring-2 focus:ring-blue-500 rounded-lg">
-        {content}
-      </button>
-    );
-  }
-
-  return content;
-}
-
-export function WorkflowPipeline({ data, personalMode = false, role = 'media' }: WorkflowPipelineProps) {
-  const [selectedStage, setSelectedStage] = useState<{title: string, count: number, waitingStatus: 'me' | 'others' | 'none'} | null>(null);
-
-  const handleStageClick = (title: string, count: number, waitingStatus: 'me' | 'others' | 'none') => {
-    setSelectedStage({ title, count, waitingStatus });
-  };
-
-  const isMedia = role === 'media';
-
-  // 总积压数（用于判断是否空态）
-  const totalBacklog =
-    data.pendingMarketApprovalLeads + data.pendingMarketApprovalInfluencers +
-    data.approvedPendingQuote + data.quotedPendingApproval +
-    data.approvedPendingCooperation +
-    data.confirmedPendingExecutionWaitDraft + data.confirmedPendingExecutionResubmit +
-    data.pendingMyReview + data.pendingOthersReview +
-    data.confirmedPendingExecutionFinalized + data.startedPendingCompletion +
-    data.pendingExpenseGeneration + data.pendingMyExpenseReview +
-    data.pendingOthersExpenseReview + data.pendingPayment;
-
-  if (totalBacklog === 0) {
-    return (
-      <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-        <EmptyState
-          icon={<BarChart3 className="w-8 h-8" />}
-          title="当前暂无积压待办"
-          description="所有节点均无待处理事项，团队运转顺畅"
-        />
+      <div className="flex flex-col items-center justify-center py-16 text-gray-400 dark:text-gray-500">
+        <svg className="w-14 h-14 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+        </svg>
+        <p className="text-sm">暂无执行阶段</p>
       </div>
     );
   }
-  
-  // 简化的文案
-  const labels = {
-    pendingApproval: "待审批提报",
-    pendingQuote: "待报价",
-    quotedPendingApproval: "待审批报价",
-    pendingCooperation: "待确认合作",
-      
-    pendingExecWaitDraft: "待执行(待提稿)",
-    pendingExecResubmit: "待执行(待重新提稿)",
-    pendingReview: "待审稿",
-    pendingOthersReview: "待他人审稿",
-    pendingExecFinalized: "待执行(已定稿)",
-    pendingCompletion: "待完结执行",
-      
-    pendingExpense: "待生成支出",
-    pendingMyExpenseReview: "待我审核支出",
-    pendingOthersExpenseReview: "待他人审核支出",
-    pendingPayment: "待付款",
-  };
-
-  const getWaitingStatus = (waitMarket: boolean, waitMedia: boolean) => {
-    if (waitMarket && !isMedia) return 'me';
-    if (waitMarket && isMedia) return 'others';
-    if (waitMedia && isMedia) return 'me';
-    if (waitMedia && !isMedia) return 'others';
-    return 'none';
-  };
 
   return (
-    <div className="space-y-6">
-      <StageDetailModal 
-        isOpen={!!selectedStage}
-        onClose={() => setSelectedStage(null)}
-        stageTitle={selectedStage?.title || ''}
-        count={selectedStage?.count || 0}
-        personalMode={personalMode}
-        waitingStatus={selectedStage?.waitingStatus || 'none'}
-      />
-      {/* 阶段 1: 投放前 */}
-      <div className="relative bg-slate-50/50 rounded-xl p-6 border border-slate-200 shadow-sm">
-        <div className="flex items-center gap-3 mb-5">
-          <div className="w-7 h-7 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-sm font-bold shadow-sm border border-blue-200">1</div>
-          <h3 className="font-semibold text-slate-800 text-base">投放前</h3>
-          <span className="text-[10px] text-slate-400 font-mono hidden sm:inline">报价与审批</span>
-          <div className="h-px bg-slate-200 flex-1 ml-4"></div>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <StageCard title={labels.pendingApproval} count={data.pendingMarketApprovalLeads + data.pendingMarketApprovalInfluencers} waitingStatus={getWaitingStatus(true, false)} onClick={() => handleStageClick(labels.pendingApproval, data.pendingMarketApprovalLeads + data.pendingMarketApprovalInfluencers, getWaitingStatus(true, false))} personalMode={personalMode} />
-          <StageCard title={labels.pendingQuote} count={data.approvedPendingQuote} waitingStatus={getWaitingStatus(false, true)} onClick={() => handleStageClick(labels.pendingQuote, data.approvedPendingQuote, getWaitingStatus(false, true))} personalMode={personalMode} />
-          <StageCard title={labels.quotedPendingApproval} count={data.quotedPendingApproval} waitingStatus={getWaitingStatus(true, false)} onClick={() => handleStageClick(labels.quotedPendingApproval, data.quotedPendingApproval, getWaitingStatus(true, false))} personalMode={personalMode} />
-          <StageCard title={labels.pendingCooperation} count={data.approvedPendingCooperation} waitingStatus={getWaitingStatus(false, true)} onClick={() => handleStageClick(labels.pendingCooperation, data.approvedPendingCooperation, getWaitingStatus(false, true))} personalMode={personalMode} />
+    <>
+      {/* 移动端：水平滚动泳道；桌面端：网格布局 */}
+      <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0 scrollbar-thin">
+        <div className="flex sm:grid sm:grid-cols-4 gap-3 sm:gap-4 min-w-[640px] sm:min-w-0 pb-2 sm:pb-0">
+          {grouped.map(({ status, stages: groupStages }) => (
+            <div key={status} className="flex-1 sm:flex-none min-w-[150px] sm:min-w-0">
+              {/* 列标题 */}
+              <div className="flex items-center justify-between mb-3 px-1">
+                <div className="flex items-center gap-2">
+                  <StatusDot status={status} />
+                  <h3 className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
+                    {status}
+                  </h3>
+                </div>
+                <span className="text-[10px] sm:text-xs text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-700 px-1.5 py-0.5 rounded-full">
+                  {groupStages.length}
+                </span>
+              </div>
+
+              {/* 卡片列表 */}
+              <div className="space-y-2 sm:space-y-3">
+                {groupStages.length === 0 ? (
+                  <div className="text-center py-6 sm:py-8 text-gray-300 dark:text-gray-600">
+                    <svg className="w-8 h-8 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                    </svg>
+                    <p className="text-[10px] sm:text-xs">暂无</p>
+                  </div>
+                ) : (
+                  groupStages.map((stage) => (
+                    <StageCard
+                      key={stage.id}
+                      stage={stage}
+                      onClick={() => setSelectedStage(stage)}
+                    />
+                  ))
+                )}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
-      {/* 阶段间箭头 */}
-      <div className="flex items-center justify-center gap-1 text-slate-300">
-        <div className="h-px w-12 bg-slate-200"></div>
-        <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-        </svg>
-        <div className="h-px w-12 bg-slate-200"></div>
-      </div>
-      {/* 阶段 2: 投放中 */}
-      <div className="relative bg-slate-50/50 rounded-xl p-6 border border-slate-200 shadow-sm">
-        <div className="absolute -top-6 left-9 w-px h-6 bg-slate-300 border-l border-dashed border-slate-400"></div>
-        <div className="flex items-center gap-3 mb-5">
-          <div className="w-7 h-7 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-sm font-bold shadow-sm border border-indigo-200">2</div>
-          <h3 className="font-semibold text-slate-800 text-base">投放中</h3>
-          <span className="text-[10px] text-slate-400 font-mono hidden sm:inline">执行与审稿</span>
-          <div className="h-px bg-slate-200 flex-1 ml-4"></div>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
-          <StageCard title={labels.pendingExecWaitDraft} count={data.confirmedPendingExecutionWaitDraft} waitingStatus={getWaitingStatus(false, true)} onClick={() => handleStageClick(labels.pendingExecWaitDraft, data.confirmedPendingExecutionWaitDraft, getWaitingStatus(false, true))} personalMode={personalMode} />
-          <StageCard title={labels.pendingExecResubmit} count={data.confirmedPendingExecutionResubmit} waitingStatus={getWaitingStatus(false, true)} onClick={() => handleStageClick(labels.pendingExecResubmit, data.confirmedPendingExecutionResubmit, getWaitingStatus(false, true))} personalMode={personalMode} />
-          <StageCard title={labels.pendingReview} count={data.pendingMyReview} waitingStatus="me" onClick={() => handleStageClick(labels.pendingReview, data.pendingMyReview, "me")} personalMode={personalMode} />
-          <StageCard title={labels.pendingOthersReview} count={data.pendingOthersReview} waitingStatus="others" onClick={() => handleStageClick(labels.pendingOthersReview, data.pendingOthersReview, "others")} personalMode={personalMode} />
-          <StageCard title={labels.pendingExecFinalized} count={data.confirmedPendingExecutionFinalized} waitingStatus={getWaitingStatus(false, true)} onClick={() => handleStageClick(labels.pendingExecFinalized, data.confirmedPendingExecutionFinalized, getWaitingStatus(false, true))} personalMode={personalMode} />
-          <StageCard title={labels.pendingCompletion} count={data.startedPendingCompletion} waitingStatus={getWaitingStatus(true, false)} onClick={() => handleStageClick(labels.pendingCompletion, data.startedPendingCompletion, getWaitingStatus(true, false))} personalMode={personalMode} />
-        </div>
-      </div>
-
-      {/* 阶段间箭头 */}
-      <div className="flex items-center justify-center gap-1 text-slate-300">
-        <div className="h-px w-12 bg-slate-200"></div>
-        <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-        </svg>
-        <div className="h-px w-12 bg-slate-200"></div>
-      </div>
-      {/* 阶段 3: 投放后 */}
-      <div className="relative bg-slate-50/50 rounded-xl p-6 border border-slate-200 shadow-sm">
-        <div className="absolute -top-6 left-9 w-px h-6 bg-slate-300 border-l border-dashed border-slate-400"></div>
-        <div className="flex items-center gap-3 mb-5">
-          <div className="w-7 h-7 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-sm font-bold shadow-sm border border-emerald-200">3</div>
-          <h3 className="font-semibold text-slate-800 text-base">投放后</h3>
-          <span className="text-[10px] text-slate-400 font-mono hidden sm:inline">结算与付款</span>
-          <div className="h-px bg-slate-200 flex-1 ml-4"></div>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <StageCard title={labels.pendingExpense} count={data.pendingExpenseGeneration} waitingStatus={getWaitingStatus(false, true)} onClick={() => handleStageClick(labels.pendingExpense, data.pendingExpenseGeneration, getWaitingStatus(false, true))} personalMode={personalMode} />
-          <StageCard title={labels.pendingMyExpenseReview} count={data.pendingMyExpenseReview} waitingStatus="me" onClick={() => handleStageClick(labels.pendingMyExpenseReview, data.pendingMyExpenseReview, "me")} personalMode={personalMode} />
-          <StageCard title={labels.pendingOthersExpenseReview} count={data.pendingOthersExpenseReview} waitingStatus="others" onClick={() => handleStageClick(labels.pendingOthersExpenseReview, data.pendingOthersExpenseReview, "others")} personalMode={personalMode} />
-          <StageCard title={labels.pendingPayment} count={data.pendingPayment} waitingStatus={getWaitingStatus(false, true)} onClick={() => handleStageClick(labels.pendingPayment, data.pendingPayment, getWaitingStatus(false, true))} personalMode={personalMode} />
-        </div>
-      </div>
-    </div>
+      {/* 详情弹窗 */}
+      {selectedStage && (
+        <StageDetailModal
+          stage={selectedStage}
+          onClose={() => setSelectedStage(null)}
+        />
+      )}
+    </>
   );
-}
+};
+
+/* 状态圆点 */
+const StatusDot: React.FC<{ status: string }> = ({ status }) => {
+  const colors: Record<string, string> = {
+    '待执行': 'bg-yellow-400',
+    '执行中': 'bg-blue-400',
+    '已完成': 'bg-green-400',
+    '延期': 'bg-red-400',
+  };
+  return (
+    <span className={`w-2 h-2 rounded-full ${colors[status] || 'bg-gray-400'}`} />
+  );
+};
+
+/* 阶段卡片 */
+const StageCard: React.FC<{ stage: Stage; onClick: () => void }> = ({ stage, onClick }) => {
+  const [imgError, setImgError] = useState(false);
+
+  return (
+    <button
+      onClick={onClick}
+      className="w-full text-left bg-white dark:bg-gray-800/80 rounded-lg sm:rounded-xl border border-gray-200 dark:border-gray-700 p-2.5 sm:p-4 hover:shadow-md hover:border-gray-300 dark:hover:border-gray-600 transition-all active:scale-[0.98] group"
+    >
+      {/* 客户信息 */}
+      <div className="flex items-center gap-2 mb-1.5 sm:mb-2">
+        <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-[9px] sm:text-xs font-bold flex-shrink-0">
+          {stage.clientName?.charAt(0) || '?'}
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="text-[11px] sm:text-sm font-medium text-gray-900 dark:text-white truncate leading-tight">
+            {stage.clientName}
+          </p>
+          <p className="text-[9px] sm:text-xs text-gray-400 dark:text-gray-500 truncate leading-tight">
+            {stage.projectName}
+          </p>
+        </div>
+      </div>
+
+      {/* 平台标签 + 负责人 */}
+      <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap mb-1.5 sm:mb-2">
+        {stage.platform && (
+          <span className="text-[9px] sm:text-xs px-1.5 py-0.5 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 truncate max-w-[60px] sm:max-w-none">
+            {stage.platform}
+          </span>
+        )}
+        {stage.assignee && (
+          <span className="flex items-center gap-1 text-[9px] sm:text-xs text-gray-400 dark:text-gray-500">
+            <svg className="w-2.5 h-2.5 sm:w-3 sm:h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+            <span className="truncate max-w-[50px] sm:max-w-none">{stage.assignee}</span>
+          </span>
+        )}
+      </div>
+
+      {/* 任务预览 */}
+      {stage.tasks && stage.tasks.length > 0 && (
+        <div className="space-y-0.5 sm:space-y-1 mb-1.5 sm:mb-2">
+          {stage.tasks.slice(0, 2).map((task) => (
+            <div key={task.id} className="flex items-start gap-1 sm:gap-1.5">
+              <span className={`w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full mt-1 flex-shrink-0 ${
+                task.status === '已完成' ? 'bg-green-400' :
+                task.status === '执行中' ? 'bg-blue-400' :
+                'bg-gray-300 dark:bg-gray-600'
+              }`} />
+              <span className="text-[9px] sm:text-xs text-gray-500 dark:text-gray-400 truncate leading-tight">
+                {task.title}
+              </span>
+            </div>
+          ))}
+          {stage.tasks.length > 2 && (
+            <p className="text-[9px] sm:text-xs text-gray-400 dark:text-gray-500 pl-2 sm:pl-2.5">
+              +{stage.tasks.length - 2} 项更多
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* 底部：截止时间 */}
+      {(stage.deadline || stage.endDate) && (
+        <div className="flex items-center gap-1 text-[9px] sm:text-xs text-gray-400 dark:text-gray-500 pt-1 sm:pt-1.5 border-t border-gray-100 dark:border-gray-700">
+          <svg className="w-2.5 h-2.5 sm:w-3 sm:h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+          <span>{(stage.deadline || stage.endDate)?.replace(/-/g, '/')}</span>
+        </div>
+      )}
+    </button>
+  );
+};
+
+export default WorkflowPipeline;

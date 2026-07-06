@@ -1,130 +1,115 @@
-import React, { useState } from 'react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { marketingTrendData, mediaTrendData, TrendDataset } from '../mockData';
-import { cn } from '../lib/utils';
-import { EmptyState } from './Skeleton';
-import { BarChart3 } from 'lucide-react';
+import React from 'react';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+} from 'recharts';
 
-interface TrendChartProps {
-  role?: 'media' | 'marketing';
-  viewMode?: 'self' | 'team';
-  loading?: boolean;
+interface TrendDataPoint {
+  date: string;
+  completed: number;
+  inProgress: number;
+  newTasks: number;
 }
 
-type TimeRange = '7d' | '14d' | '30d';
+interface TrendChartProps {
+  data: TrendDataPoint[];
+}
 
-const rangeLabels: Record<TimeRange, string> = { '7d': '近7日', '14d': '近14日', '30d': '近30日' };
-
-export function TrendChart({ role = 'media', viewMode = 'self', loading = false }: TrendChartProps) {
-  const [range, setRange] = useState<TimeRange>('7d');
-
-  const dataset: TrendDataset = role === 'media' ? mediaTrendData[range] : marketingTrendData[range];
-  const { label1, label2, data } = dataset;
-
-  const color1 = role === 'media' ? '#8b5cf6' : '#3b82f6';
-  const color2 = role === 'media' ? '#10b981' : '#10b981';
-
-  const gradientId1 = `gradient1-${role}-${range}`;
-  const gradientId2 = `gradient2-${role}-${range}`;
-
-  if (loading) {
-    return (
-      <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm h-full flex flex-col">
-        <div className="mb-4 flex items-center justify-between">
-          <div className="space-y-2">
-            <div className="h-4 w-28 animate-pulse rounded bg-slate-200" />
-            <div className="h-3 w-36 animate-pulse rounded bg-slate-200" />
-          </div>
-          <div className="flex gap-2">
-            {[1, 2, 3].map(i => <div key={i} className="h-6 w-12 animate-pulse rounded bg-slate-200" />)}
-          </div>
-        </div>
-        <div className="flex-1 min-h-[200px] animate-pulse rounded-lg bg-slate-100" />
-      </div>
-    );
-  }
-
+const TrendChart: React.FC<TrendChartProps> = ({ data }) => {
   if (!data || data.length === 0) {
     return (
-      <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm h-full">
-        <EmptyState
-          icon={<BarChart3 className="w-8 h-8" />}
-          title="暂无趋势数据"
-          description="所选时间范围内没有可展示的指标数据"
-        />
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 sm:p-6">
+        <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-4">执行趋势</h3>
+        <div className="flex flex-col items-center justify-center py-12 text-gray-400 dark:text-gray-500">
+          <svg className="w-12 h-12 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          </svg>
+          <p className="text-sm">暂无趋势数据</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm h-full flex flex-col" key={`trend-${role}`}>
-      <div className="mb-4 flex items-center justify-between">
-        <div>
-          <div className="flex items-center gap-2">
-            <h3 className="text-sm font-semibold text-slate-800">核心指标趋势</h3>
-            <span className="text-[10px] px-1.5 py-0.5 rounded-full font-medium bg-slate-100 text-slate-500">
-              {role === 'media' ? '媒介' : '市场'}视角
-            </span>
-          </div>
-          <p className="text-xs text-slate-500">
-            {role === 'media' ? '执行与完结进度对比' : '提报总量与最终合作转化对比'}
-            {viewMode === 'team' ? ' · 团队' : ' · 个人'}
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          {(Object.keys(rangeLabels) as TimeRange[]).map(key => (
-            <button
-              key={key}
-              onClick={() => setRange(key)}
-              className={cn(
-                "px-2.5 py-1 rounded text-xs font-medium transition-all",
-                range === key
-                  ? "bg-slate-100 text-slate-800 shadow-sm"
-                  : "text-slate-400 hover:text-slate-600"
-              )}
-            >
-              {rangeLabels[key]}
-            </button>
-          ))}
+    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 sm:p-6">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-base font-semibold text-gray-900 dark:text-white">执行趋势</h3>
+        <div className="flex items-center gap-2 text-[10px] sm:text-xs text-gray-400 dark:text-gray-500">
+          <span className="hidden sm:inline">近7天</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-blue-400" />
         </div>
       </div>
 
-      <div className="mb-3 flex items-center gap-4 text-xs">
-        <div className="flex items-center gap-1.5">
-          <div className="w-3 h-0.5 rounded-full" style={{ backgroundColor: color1 }}></div>
-          <span className="text-slate-600">{label1}</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <div className="w-3 h-0.5 rounded-full" style={{ backgroundColor: color2 }}></div>
-          <span className="text-slate-600">{label2}</span>
-        </div>
-      </div>
-
-      <div className="flex-1 min-h-[200px]">
+      {/* 移动端：调整图表高度和边距 */}
+      <div className="w-full h-[220px] sm:h-[300px]">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data} margin={{ top: 5, right: 0, left: -20, bottom: 0 }}>
-            <defs>
-              <linearGradient id={gradientId1} x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor={color1} stopOpacity={0.1}/>
-                <stop offset="95%" stopColor={color1} stopOpacity={0}/>
-              </linearGradient>
-              <linearGradient id={gradientId2} x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor={color2} stopOpacity={0.2}/>
-                <stop offset="95%" stopColor={color2} stopOpacity={0}/>
-              </linearGradient>
-            </defs>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-            <XAxis dataKey="date" fontSize={10} tickLine={false} axisLine={false} tickMargin={8} />
-            <YAxis fontSize={10} tickLine={false} axisLine={false} tickMargin={8} />
-            <Tooltip
-              contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', fontSize: '12px' }}
-              cursor={{ stroke: '#94a3b8', strokeWidth: 1, strokeDasharray: '4 4' }}
+          <LineChart
+            data={data}
+            margin={{ top: 5, right: 5, left: -20, bottom: 5 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+            <XAxis
+              dataKey="date"
+              tick={{ fontSize: 10 }}
+              tickFormatter={(val: string) => {
+                // 移动端只显示月-日
+                const parts = val.split('-');
+                return parts.length >= 2 ? `${parts[1]}/${parts[2] || parts[0]}` : val;
+              }}
+              stroke="#9ca3af"
             />
-            <Area type="monotone" dataKey="value1" stroke={color1} strokeWidth={2} fillOpacity={1} fill={`url(#${gradientId1})`} name={label1} />
-            <Area type="monotone" dataKey="value2" stroke={color2} strokeWidth={2} fillOpacity={1} fill={`url(#${gradientId2})`} name={label2} />
-          </AreaChart>
+            <YAxis tick={{ fontSize: 10 }} stroke="#9ca3af" />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: 'rgba(255,255,255,0.95)',
+                border: '1px solid #e5e7eb',
+                borderRadius: '8px',
+                fontSize: '12px',
+              }}
+              labelFormatter={(label: string) => `日期: ${label}`}
+            />
+            <Legend
+              wrapperStyle={{ fontSize: '11px', paddingTop: '8px' }}
+              iconSize={8}
+            />
+            <Line
+              type="monotone"
+              dataKey="completed"
+              name="已完成"
+              stroke="#22c55e"
+              strokeWidth={2}
+              dot={{ r: 3 }}
+              activeDot={{ r: 5 }}
+            />
+            <Line
+              type="monotone"
+              dataKey="inProgress"
+              name="执行中"
+              stroke="#3b82f6"
+              strokeWidth={2}
+              dot={{ r: 3 }}
+              activeDot={{ r: 5 }}
+            />
+            <Line
+              type="monotone"
+              dataKey="newTasks"
+              name="新增"
+              stroke="#f59e0b"
+              strokeWidth={2}
+              dot={{ r: 3 }}
+              activeDot={{ r: 5 }}
+            />
+          </LineChart>
         </ResponsiveContainer>
       </div>
     </div>
   );
-}
+};
+
+export default TrendChart;

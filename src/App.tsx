@@ -126,7 +126,7 @@ const App: React.FC = () => {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+      <main className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-4 sm:space-y-6">
         {/* 筛选栏 */}
         <FilterBar
           filter={filter}
@@ -147,9 +147,9 @@ const App: React.FC = () => {
         </div>
 
         {/* Pipeline 泳道图 */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 sm:p-6">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-3 sm:p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-base font-semibold text-gray-900 dark:text-white">
+            <h2 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white">
               执行流水线
             </h2>
             <span className="text-xs text-gray-500 dark:text-gray-400">

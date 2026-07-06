@@ -327,37 +327,40 @@ const FilterBar: React.FC<FilterBarProps> = ({
 
       {/* 第二行：高级筛选面板 */}
       {advancedOpen && (
-        <div className="flex items-center gap-2 flex-wrap p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700">
-          {/* 平台 */}
-          <MultiSelect
-            label="平台"
-            options={PLATFORM_OPTIONS}
-            selected={filter.platforms}
-            onChange={(v) => update({ platforms: v })}
-            placeholder="全部平台"
-          />
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700">
+          {/* 筛选项包装 - 小屏横向滚动 */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 scrollbar-thin">
+            {/* 平台 */}
+            <MultiSelect
+              label="平台"
+              options={PLATFORM_OPTIONS}
+              selected={filter.platforms}
+              onChange={(v) => update({ platforms: v })}
+              placeholder="全部平台"
+            />
 
-          {/* 状态 */}
-          <MultiSelect
-            label="状态"
-            options={STATUS_OPTIONS}
-            selected={filter.statuses}
-            onChange={(v) => update({ statuses: v })}
-            placeholder="全部状态"
-          />
+            {/* 状态 */}
+            <MultiSelect
+              label="状态"
+              options={STATUS_OPTIONS}
+              selected={filter.statuses}
+              onChange={(v) => update({ statuses: v })}
+              placeholder="全部状态"
+            />
 
-          {/* 负责人 */}
-          <MultiSelect
-            label="负责人"
-            options={assigneeOptions}
-            selected={filter.assignees}
-            onChange={(v) => update({ assignees: v })}
-            placeholder="全部负责人"
-          />
+            {/* 负责人 */}
+            <MultiSelect
+              label="负责人"
+              options={assigneeOptions}
+              selected={filter.assignees}
+              onChange={(v) => update({ assignees: v })}
+              placeholder="全部负责人"
+            />
+          </div>
 
-          {/* 日期范围 */}
-          <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
-            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          {/* 日期范围 - 单独一行小屏 */}
+          <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400 flex-shrink-0">
+            <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
             <DateRangeInline
