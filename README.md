@@ -57,6 +57,8 @@ npm run lint     # TypeScript 类型检查
 - `/src/App.tsx` - 主应用入口（viewMode/role/selectedMemberIds 三态驱动）
 - `/PRD.md` - 产品需求说明文档
 - `/PROJECT_HANDOVER.md` - 项目核心设计与组件开发约束文档（接手必读）
+- `/AI_WORKING_NOTES.md` - AI 协作注意事项与防坑经验（接手必读）
+- `/EXPERT_REVIEW.md` - 专家评估报告与处理决议
 
 ## ⚠️ 贡献与开发须知
-如果您（或 AI 大模型）准备继续开发本项目，**请务必优先阅读 [`PROJECT_HANDOVER.md`](./PROJECT_HANDOVER.md)**，其中包含了项目核心架构的约束与防坑指南，特别是关于 `MemberSelect` 多选逻辑、`TeamWorkloadChart` 自适应滚动、`WorkflowPipeline` 三阶段链路等组件的特定实现约束。
+如果您（或 AI 大模型）准备继续开发本项目，**请务必优先阅读 [`PROJECT_HANDOVER.md`](./PROJECT_HANDOVER.md) 与 [`AI_WORKING_NOTES.md`](./AI_WORKING_NOTES.md)**：前者包含项目核心架构约束与防坑指南（`MemberSelect` 多选逻辑、`TeamWorkloadChart` 自适应滚动、`WorkflowPipeline` 三阶段链路等组件的特定实现约束），后者总结 AI 协作易错点（查 git 历史而非只看 HEAD、不编造数据迁就错误代码、验证而非推断、提交卫生等）。

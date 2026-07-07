@@ -1,6 +1,8 @@
 # AI 协作工作注意事项（本项目实战总结）
 
 > 致接手的 AI 模型：本文档总结本项目中 AI 协作常遇到的问题与思考注意事项。**接手时请优先读取本文档 + PROJECT_HANDOVER.md + PRD.md**，避免重蹈覆辙。
+>
+> 📌 **项目状态（2026-07-07）**：暂告一段落。专家评估（EXPERT_REVIEW.md）已闭环，数据联动 / 负载下钻 / 明细负责人 / PRD / 命名清理均已修复并上线。续作前先看本文档 + PROJECT_HANDOVER.md。
 
 ---
 
@@ -44,5 +46,14 @@
 - 数据聚合：self→`mockMember*`，team 空选→`mock*Team`，team 有选→`getAggregated*`
 - 组件：StatCard(岗位差异化) / TrendChart(7d/14d/30d) / TeamWorkloadChart(堆叠柱状图横向滚动) / WorkflowPipeline+StageDetailModal(三阶段+me/others+点击详情) / TaskProgressTable(我的/本组待办) / MemberSelect(按role过滤) / PersonalMemo(self备忘)
 
+## 九、2026-07-07 新增坑与经验（专家评估修复轮）
+1. **Tailwind v4 无 `scrollbar-thin` 插件**：`scrollbar-thin` 类无效，自定义滚动条用任意值变体 `[&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-thumb]:bg-slate-300/70 ...`。
+2. **recharts v3 `Bar` onClick**：回调首参是 `BarRectangleItem`，原始数据在 `data.payload`（取成员 id 用 `data.payload.id`），不是 `data.id`。
+3. **写死像素高度 + `overflow-hidden` 会裁切**：加一行引导文案后头部变高，`height:280` 的图表被外层裁掉 X 轴人名。容器用 `flex-1 min-h-0` + 子元素 `height:100%` 自适应，别写死高度。
+4. **`<a href="#">` 占位会跳顶**：占位跳转动作用 `<button type="button">`。
+5. **命名要覆盖全部用途**：缩放函数同时驱动趋势图+招募待办时，别只命名一个用途（`getTrendScaleRatio` 误导，已改 `getViewScopeRatio`）。
+6. **规整时查死代码**：`tsc` 不开 `noUnusedLocals` 时不报未用导入/导出，需主动 grep 排查（本次清掉 `allMemberIds` / `Legend` / 未用图标导入）。
+7. **跨项目经验已沉淀到全局** `~/.claude/CLAUDE.md`（通用原则+用户偏好+技术坑），本文件保留项目专属内容。
+
 ---
-*最后更新：2026-07-06*
+*最后更新：2026-07-07*
