@@ -16,9 +16,11 @@ interface TeamWorkloadChartProps {
   data: WorkloadDataItem[];
   bars: WorkloadBarConfig[];
   loading?: boolean;
+  /** 点击成员柱回调（由 App 打开新标签页查看该成员个人详情） */
+  onMemberClick?: (memberId: string) => void;
 }
 
-const TeamWorkloadChart: React.FC<TeamWorkloadChartProps> = ({ data, bars, loading }) => {
+const TeamWorkloadChart: React.FC<TeamWorkloadChartProps> = ({ data, bars, loading, onMemberClick }) => {
   if (loading) {
     return (
       <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 sm:p-6">
@@ -34,7 +36,7 @@ const TeamWorkloadChart: React.FC<TeamWorkloadChartProps> = ({ data, bars, loadi
         <h3 className="text-base font-semibold text-slate-800 mb-4">团队负载分布</h3>
         <div className="flex-1 flex flex-col items-center justify-center py-12 text-slate-400">
           <p className="text-sm">暂无负载数据</p>
-          <p className="text-xs mt-1">请在右侧选择成员</p>
+          <p className="text-xs mt-1">请在上方选择成员查看</p>
         </div>
       </div>
     );
@@ -45,16 +47,22 @@ const TeamWorkloadChart: React.FC<TeamWorkloadChartProps> = ({ data, bars, loadi
 
   return (
     <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 sm:p-6 h-full flex flex-col">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-base font-semibold text-slate-800 flex items-center gap-2">
-          <Users className="w-4 h-4 text-slate-500" />
-          团队负载分布
-        </h3>
-        <span className="text-xs text-slate-400">{data.length} 人</span>
+      <div className="mb-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-base font-semibold text-slate-800 flex items-center gap-2">
+            <Users className="w-4 h-4 text-slate-500" />
+            团队负载分布
+          </h3>
+          <span className="text-xs text-slate-400">{data.length} 人</span>
+        </div>
+        <p className="text-[11px] text-slate-400 mt-1">点击成员柱可在新标签页查看其个人详情</p>
       </div>
       {/* 横向滚动容器 + 动态宽度内层 */}
-      <div className="overflow-x-auto overflow-y-hidden flex-1 scrollbar-thin">
-        <div style={{ width: `${chartWidth}px`, minWidth: '100%', height: 280 }}>
+      <div className="overflow-x-auto overflow-y-hidden flex-1 min-h-0 [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-thumb]:bg-slate-300/70 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb:hover]:bg-slate-400">
+        <div
+          className={onMemberClick ? 'cursor-pointer' : ''}
+          style={{ width: `${chartWidth}px`, minWidth: '100%', height: '100%' }}
+        >
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={data} margin={{ top: 5, right: 5, left: -20, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
@@ -76,7 +84,16 @@ const TeamWorkloadChart: React.FC<TeamWorkloadChartProps> = ({ data, bars, loadi
                 }}
               />
               {bars.map((bar) => (
-                <Bar key={bar.key} dataKey={bar.key} stackId="a" fill={bar.color} />
+                <Bar
+                  key={bar.key}
+                  dataKey={bar.key}
+                  stackId="a"
+                  fill={bar.color}
+                  onClick={(payload: any) => {
+                    const id = payload?.payload?.id ?? payload?.id;
+                    if (id && onMemberClick) onMemberClick(id);
+                  }}
+                />
               ))}
             </BarChart>
           </ResponsiveContainer>

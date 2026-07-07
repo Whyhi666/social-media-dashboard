@@ -398,3 +398,83 @@ export const mockOrganization = [
 
 /** 所有成员 ID 列表 */
 export const allMemberIds = mockOrganization.flatMap(d => d.children.map(c => c.id));
+
+// ============================================================
+// 视图/成员筛选联动派生函数（修复专家评估 Whyhi 一/三 处数据联动断裂）
+// ============================================================
+
+/**
+ * 趋势图 / 招募任务待办的缩放比例：以“当前视图的合作转化体量”占“团队总量”的比例驱动。
+ * - self 视图 → 个人占比（小于 1，趋势/待办随个人缩放）
+ * - team 空选 → 1（团队全量基准）
+ * - team 有选 → 选中成员聚合占比
+ * 比例钳制到 [0.2, 1]，避免个人视图数值过小或为 0 导致图表失真。
+ */
+export function getTrendScaleRatio(confirmedCooperations: number): number {
+  const teamTotal = mockInfluencerStatsTeam.confirmedCooperations;
+  if (teamTotal <= 0) return 1;
+  const ratio = confirmedCooperations / teamTotal;
+  return Math.min(1, Math.max(0.2, ratio));
+}
+
+/** 按 role + 缩放比例生成趋势数据集（深拷贝，保证引用变化触发重渲染） */
+export function getScaledTrendData(
+  role: 'media' | 'marketing',
+  ratio: number
+): Record<string, TrendDataset> {
+  const base = role === 'media' ? mediaTrendData : marketingTrendData;
+  const scaled: Record<string, TrendDataset> = {};
+  (Object.keys(base) as (keyof typeof base)[]).forEach((key) => {
+    const ds = base[key];
+    scaled[key] = {
+      label1: ds.label1,
+      label2: ds.label2,
+      data: ds.data.map((p) => ({
+        date: p.date,
+        value1: Math.max(0, Math.round(p.value1 * ratio)),
+        value2: Math.max(0, Math.round(p.value2 * ratio)),
+      })),
+    };
+  });
+  return scaled;
+}
+
+/**
+ * 按缩放比例生成招募任务列表：仅缩放“待办数（myActionableItems）”，
+ * 使 self/team/选中成员下“我的待办/本组待办”随之联动；
+ * 目标/已完成等项目级进度数据保持不变（项目目标是组织级，不随人变）。
+ * total = round(review*ratio) + round(expense*ratio)，保证行内守恒。
+ */
+export function getScaledTasks(ratio: number): RecruitmentTask[] {
+  return mockTasks.map((t) => {
+    const pendingMyReview = Math.round(t.myActionableItems.pendingMyReview * ratio);
+    const pendingMyExpenseReview = Math.round(t.myActionableItems.pendingMyExpenseReview * ratio);
+    return {
+      ...t,
+      myActionableItems: {
+        total: pendingMyReview + pendingMyExpenseReview,
+        pendingMyReview,
+        pendingMyExpenseReview,
+      },
+    };
+  });
+}
+
+// ============================================================
+// 成员名 / 部门成员（供 StageDetailModal 明细负责人渲染）
+// ============================================================
+
+/** 根据 id 查成员姓名 */
+export function getMemberName(id: string): string {
+  for (const dept of mockOrganization) {
+    const m = dept.children.find((c) => c.id === id);
+    if (m) return m.name;
+  }
+  return id;
+}
+
+/** 取当前角色对应部门的全部成员 */
+export function getDeptMembers(role: 'media' | 'marketing'): { id: string; name: string }[] {
+  const deptId = role === 'media' ? 'dept1' : 'dept2';
+  return mockOrganization.find((d) => d.id === deptId)?.children ?? [];
+}

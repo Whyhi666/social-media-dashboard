@@ -15,8 +15,11 @@ import {
   getAggregatedWorkflowStats,
   getWorkloadData,
   getWorkloadBars,
-  marketingTrendData,
-  mediaTrendData,
+  getTrendScaleRatio,
+  getScaledTrendData,
+  getScaledTasks,
+  getMemberName,
+  getDeptMembers,
   mockTasks,
   mockExecutionStatsSelf,
   mockExecutionStatsTeam,
@@ -26,14 +29,26 @@ import { ClipboardList, Info, Users } from 'lucide-react';
 
 type Role = 'media' | 'marketing';
 
+// 读取 URL 初始参数：支持“点击负载柱 → 新标签页打开该成员个人详情”
+// （?view=team&role=media&member=u1 → 团队视角按该成员筛选）
+const urlParams = new URLSearchParams(window.location.search);
+const paramMember = urlParams.get('member');
+const paramRole = urlParams.get('role');
+const paramView = urlParams.get('view');
+
 const App: React.FC = () => {
-  const [viewMode, setViewMode] = useState<ViewMode>('self');
-  const [role, setRole] = useState<Role>('media');
-  const [selectedMemberIds, setSelectedMemberIds] = useState<string[]>([]);
+  const [viewMode, setViewMode] = useState<ViewMode>(() =>
+    paramMember ? 'team' : paramView === 'team' ? 'team' : 'self'
+  );
+  const [role, setRole] = useState<Role>(
+    paramRole === 'marketing' || paramRole === 'media' ? paramRole : 'media'
+  );
+  const [selectedMemberIds, setSelectedMemberIds] = useState<string[]>(paramMember ? [paramMember] : []);
   const [loading, setLoading] = useState(false);
   const [updatedAt, setUpdatedAt] = useState<Date>(() => new Date());
 
   // mock 当前登录用户：随角色切换到对应部门（媒介→张三, 市场→李四）
+  // 说明：原型阶段方便切换视角预览；上线后将以真实登录身份固定，并按角色权限显示对应选项
   const currentUserId = role === 'media' ? 'u1' : 'u2';
 
   const handleRefresh = useCallback(() => {
@@ -66,6 +81,11 @@ const App: React.FC = () => {
   // StatCard 补充指标：执行次数/待执行/招募任务数（待执行从 workflowStats 派生）
   const statExtra = useMemo(() => {
     const execStats = viewMode === 'self' ? mockExecutionStatsSelf : mockExecutionStatsTeam;
+    // 招募任务总数：self=当前用户参与的任务数（关注或有待办），team=组织级全部任务
+    const recruitmentTaskCount =
+      viewMode === 'self'
+        ? mockTasks.filter((t) => t.isFollowed || t.myActionableItems.total > 0).length
+        : mockTasks.length;
     return {
       totalExecutions: execStats.totalExecutions,
       newExecutionsThisMonth: execStats.newExecutionsThisMonth,
@@ -73,7 +93,7 @@ const App: React.FC = () => {
         workflowStats.confirmedPendingExecutionWaitDraft +
         workflowStats.confirmedPendingExecutionResubmit +
         workflowStats.confirmedPendingExecutionFinalized,
-      recruitmentTaskCount: mockTasks.length,
+      recruitmentTaskCount,
       newRecruitmentTasksThisMonth: execStats.newRecruitmentTasksThisMonth,
     };
   }, [viewMode, workflowStats]);
@@ -84,7 +104,37 @@ const App: React.FC = () => {
   );
 
   const workloadBars = useMemo(() => getWorkloadBars(role), [role]);
-  const trendData = useMemo(() => (role === 'media' ? mediaTrendData : marketingTrendData), [role]);
+
+  // 联动缩放比例：以当前视图合作转化体量占团队总量比例驱动趋势图与招募任务待办
+  const scaleRatio = useMemo(
+    () => getTrendScaleRatio(influencerStats.confirmedCooperations),
+    [influencerStats]
+  );
+
+  // 趋势图随视图/成员筛选联动（修复 Whyhi 一-1：team 选成员后趋势图不变）
+  const trendData = useMemo(
+    () => getScaledTrendData(role, scaleRatio),
+    [role, scaleRatio]
+  );
+
+  // 招募任务待办随视图/成员筛选联动（修复 Whyhi 一-2：“我的/本组待办”纹丝不动）
+  const tasks = useMemo(() => getScaledTasks(scaleRatio), [scaleRatio]);
+
+  // StageDetailModal 明细负责人：self 不展示；team 按选中成员，空选取部门全员（修复 Whyhi 六-12）
+  const detailAssignees = useMemo(() => {
+    if (viewMode === 'self') return [];
+    if (selectedMemberIds.length > 0) return selectedMemberIds.map(getMemberName);
+    return getDeptMembers(role).map((m) => m.name);
+  }, [viewMode, selectedMemberIds, role]);
+
+  // 点击负载柱：新标签页打开“按该成员筛选”的看板（不改当前页主筛选）
+  const handleMemberDrillDown = useCallback(
+    (memberId: string) => {
+      const url = `${window.location.pathname}?view=team&role=${role}&member=${encodeURIComponent(memberId)}`;
+      window.open(url, '_blank', 'noopener,noreferrer');
+    },
+    [role]
+  );
 
   const updatedAtStr = updatedAt.toLocaleString('zh-CN', {
     month: '2-digit',
@@ -209,13 +259,23 @@ const App: React.FC = () => {
             {viewMode === 'self' ? (
               <PersonalMemo />
             ) : (
-              <TeamWorkloadChart data={workloadData} bars={workloadBars} loading={loading} />
+              <TeamWorkloadChart
+                data={workloadData}
+                bars={workloadBars}
+                loading={loading}
+                onMemberClick={handleMemberDrillDown}
+              />
             )}
           </div>
         </div>
 
         {/* 业务流转链路 */}
-        <WorkflowPipeline data={workflowStats} personalMode={viewMode === 'self'} role={role} />
+        <WorkflowPipeline
+          data={workflowStats}
+          personalMode={viewMode === 'self'}
+          role={role}
+          assignees={detailAssignees}
+        />
 
         {/* 招募任务进度 */}
         <div>
@@ -223,7 +283,7 @@ const App: React.FC = () => {
             <ClipboardList className="w-4 h-4 text-slate-500" />
             招募任务进度
           </h2>
-          <TaskProgressTable tasks={mockTasks} personalMode={viewMode === 'self'} />
+          <TaskProgressTable tasks={tasks} personalMode={viewMode === 'self'} />
         </div>
       </main>
     </div>

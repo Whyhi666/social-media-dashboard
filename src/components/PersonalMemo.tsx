@@ -34,7 +34,7 @@ export function PersonalMemo() {
       
       <div className="mb-3 flex items-center justify-between relative z-10">
         <div className="flex items-center gap-2">
-          <StickyNote className="w-5 h-5 text-amber-600" />
+          <StickyNote className="w-4 h-4 text-amber-600" />
           <h3 className="text-sm font-semibold text-slate-800">工作备忘</h3>
         </div>
         <div className="flex items-center gap-3">

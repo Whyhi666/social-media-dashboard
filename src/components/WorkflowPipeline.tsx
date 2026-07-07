@@ -8,6 +8,8 @@ interface WorkflowPipelineProps {
   data: WorkflowStats;
   personalMode?: boolean;
   role?: 'media' | 'marketing';
+  /** 明细弹窗负责人候选（self 传空，team 传选中成员或部门全员） */
+  assignees?: string[];
 }
 
 interface StageCardProps {
@@ -28,10 +30,10 @@ function StageCard({ title, count, waitingStatus = 'none', onClick, personalMode
       className={cn(
         "flex flex-col p-3 rounded-lg border text-sm transition-all relative overflow-hidden group",
         isMe && count > 0
-          ? "border-amber-400 bg-amber-50 shadow-sm hover:border-amber-500 hover:bg-amber-100/80 cursor-pointer" 
+          ? "border-amber-400 bg-amber-50 shadow-sm hover:border-amber-500 hover:bg-amber-100/80 cursor-pointer"
           : count > 0
-            ? "border-gray-200 bg-white hover:border-gray-300 hover:bg-slate-50 cursor-pointer"
-            : "border-gray-200 bg-white"
+            ? "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50 cursor-pointer"
+            : "border-slate-200 bg-white"
       )}
       onClick={isClickable ? onClick : undefined}
     >
@@ -45,7 +47,7 @@ function StageCard({ title, count, waitingStatus = 'none', onClick, personalMode
       )}
 
       <div className="flex items-center justify-between mb-1 gap-1">
-        <span className={cn("font-medium truncate", isMe && count > 0 ? "text-amber-900" : "text-gray-600")} title={title}>
+        <span className={cn("font-medium truncate", isMe && count > 0 ? "text-amber-900" : "text-slate-600")} title={title}>
           {title}
         </span>
         {count > 0 && isMe && (
@@ -55,7 +57,7 @@ function StageCard({ title, count, waitingStatus = 'none', onClick, personalMode
           <span className="shrink-0 text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 font-medium">待对方处理</span>
         )}
       </div>
-      <span className={cn("text-2xl font-bold font-mono tracking-tight", isMe && count > 0 ? "text-amber-700" : "text-gray-900")}>
+      <span className={cn("text-2xl font-bold font-mono tracking-tight", isMe && count > 0 ? "text-amber-700" : "text-slate-900")}>
         {count}
       </span>
     </div>
@@ -72,7 +74,7 @@ function StageCard({ title, count, waitingStatus = 'none', onClick, personalMode
   return content;
 }
 
-export function WorkflowPipeline({ data, personalMode = false, role = 'media' }: WorkflowPipelineProps) {
+export function WorkflowPipeline({ data, personalMode = false, role = 'media', assignees = [] }: WorkflowPipelineProps) {
   const [selectedStage, setSelectedStage] = useState<{title: string, count: number, waitingStatus: 'me' | 'others' | 'none'} | null>(null);
 
   const handleStageClick = (title: string, count: number, waitingStatus: 'me' | 'others' | 'none') => {
@@ -116,13 +118,14 @@ export function WorkflowPipeline({ data, personalMode = false, role = 'media' }:
         业务流转链路
       </h3>
       <div className="space-y-6">
-      <StageDetailModal 
+      <StageDetailModal
         isOpen={!!selectedStage}
         onClose={() => setSelectedStage(null)}
         stageTitle={selectedStage?.title || ''}
         count={selectedStage?.count || 0}
         personalMode={personalMode}
         waitingStatus={selectedStage?.waitingStatus || 'none'}
+        assignees={assignees}
       />
       {/* 阶段 1: 投放前 */}
       <div className="relative bg-slate-50/50 rounded-xl p-6 border border-slate-200 shadow-sm">

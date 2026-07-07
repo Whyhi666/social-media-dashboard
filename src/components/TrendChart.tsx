@@ -63,7 +63,7 @@ const TrendChart: React.FC<TrendChartProps> = ({ data, loading }) => {
       </div>
       <div className="w-full flex-1 min-h-0">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={dataset.data} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
+          <LineChart data={dataset.data} margin={{ top: 5, right: 10, left: -10, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
             <XAxis dataKey="date" tick={{ fontSize: 10 }} stroke="#94a3b8" />
             <YAxis tick={{ fontSize: 10 }} stroke="#94a3b8" />

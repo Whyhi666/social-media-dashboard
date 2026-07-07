@@ -18,6 +18,11 @@ export function TaskProgressTable({ tasks, personalMode = true }: TaskProgressTa
     }
   }, [personalMode, filterState]);
 
+  // 视图切换时收起展开行，避免 self/team 切换后残留展开态
+  React.useEffect(() => {
+    setExpandedId(null);
+  }, [personalMode]);
+
   const toggleExpand = (id: string) => {
     setExpandedId(expandedId === id ? null : id);
   };
@@ -95,16 +100,9 @@ export function TaskProgressTable({ tasks, personalMode = true }: TaskProgressTa
             </tr>
           </thead>
           <tbody className="divide-y">
-            {filteredTasks.length === 0 && (
-              <tr>
-                <td colSpan={8} className="p-8 text-center text-slate-500">
-                  没有符合条件的任务数据
-                </td>
-              </tr>
-            )}
             {filteredTasks.length === 0 ? (
               <tr>
-                <td colSpan={8} className="p-8 text-center text-slate-500">
+                <td colSpan={6} className="p-8 text-center text-slate-500">
                   <div className="flex flex-col items-center justify-center gap-2">
                     <Target className="w-8 h-8 text-slate-300 mb-2" />
                     <p className="text-base font-medium text-slate-600">暂无匹配的任务</p>
@@ -191,7 +189,7 @@ export function TaskProgressTable({ tasks, personalMode = true }: TaskProgressTa
               {/* Expanded Actionable Items Row */}
               {expandedId === task.id && (
                 <tr className="bg-slate-50/80 shadow-inner">
-                  <td colSpan={8} className="p-0 border-b border-slate-200">
+                  <td colSpan={6} className="p-0 border-b border-slate-200">
                     <div className="px-6 py-5 ml-4 border-l-2 border-amber-400 bg-white shadow-sm my-3 mr-4 rounded-r-md">
                       <div className="flex items-center gap-6 text-sm">
                          <div className="flex items-center gap-2 text-amber-800 font-semibold">
@@ -204,18 +202,18 @@ export function TaskProgressTable({ tasks, personalMode = true }: TaskProgressTa
                                   <div className="flex items-center gap-3 bg-white px-4 py-2.5 rounded-md border border-amber-200 shadow-sm transition-all hover:shadow hover:border-amber-300">
                                      <span className="text-slate-600 text-xs font-medium">{personalMode ? '待我审稿' : '本组待审稿'}</span>
                                      <span className="font-mono font-bold text-amber-700 text-base">{task.myActionableItems.pendingMyReview}</span>
-                                     <a href="#" target="_blank" rel="noopener noreferrer" className="ml-2 px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 rounded text-xs font-medium transition-colors flex items-center gap-1 group">
+                                     <button type="button" title="跳转至原任务详情" className="ml-2 px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 rounded text-xs font-medium transition-colors flex items-center gap-1 group">
                                        去审稿 <ArrowUpRight className="w-3 h-3 text-amber-500 group-hover:text-amber-700" />
-                                     </a>
+                                     </button>
                                   </div>
                               )}
                               {task.myActionableItems.pendingMyExpenseReview > 0 && (
                                   <div className="flex items-center gap-3 bg-white px-4 py-2.5 rounded-md border border-amber-200 shadow-sm transition-all hover:shadow hover:border-amber-300">
                                      <span className="text-slate-600 text-xs font-medium">待审核支出</span>
                                      <span className="font-mono font-bold text-amber-700 text-base">{task.myActionableItems.pendingMyExpenseReview}</span>
-                                     <a href="#" target="_blank" rel="noopener noreferrer" className="ml-2 px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 rounded text-xs font-medium transition-colors flex items-center gap-1 group">
+                                     <button type="button" title="跳转至原任务详情" className="ml-2 px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 rounded text-xs font-medium transition-colors flex items-center gap-1 group">
                                        去审核 <ArrowUpRight className="w-3 h-3 text-amber-500 group-hover:text-amber-700" />
-                                     </a>
+                                     </button>
                                   </div>
                               )}
                            </div>

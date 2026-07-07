@@ -33,7 +33,11 @@
 - self 视图：`mockMemberInfluencerStats[currentUserId]` / `mockMemberWorkflowStats[currentUserId]`。
 - team 视图空选：`mockInfluencerStatsTeam` / `mockWorkflowStatsTeam`。
 - team 视图有选：`getAggregatedInfluencerStats(selectedMemberIds)` / `getAggregatedWorkflowStats(...)`。
-- 补充指标：`mockExecutionStatsSelf/Team`（累计执行次数/本月新增执行/本月新增招募任务）+ `mockTasks.length`（招募任务总数）+ workflowStats 派生（待执行）。
+- 补充指标：`mockExecutionStatsSelf/Team`（累计执行次数/本月新增执行/本月新增招募任务）+ 招募任务总数 + workflowStats 派生（待执行）。
+- **三处数据联动（2026-07-07 修复专家评估 Whyhi 一）**：
+  - 趋势图（TrendChart）：`getScaledTrendData(role, ratio)`，`ratio = getTrendScaleRatio(influencerStats.confirmedCooperations)`（以当前视图合作转化体量占团队总量比例，钳制 [0.2,1]），随视图/成员筛选联动。
+  - 招募任务待办（TaskProgressTable）：`getScaledTasks(ratio)`，仅缩放 `myActionableItems`，项目级目标/已完成进度不变。
+  - 招募任务总数：self=当前用户参与的任务数（关注或有待办），team=`mockTasks.length`（招募任务为组织级项目，选成员不改变其范围）。
 
 ---
 
@@ -49,12 +53,15 @@
 - **横向滚动与动态宽度（关键！）**：外层 `overflow-x-auto overflow-y-hidden`，内层 `style={{ width: ${Math.max(100, data.length * 60)}px, minWidth: '100%' }}`。**千万不要改为单纯 `width: 100%`。**
 - **角色数据源隔离**：组件接收已按 role 过滤的 `data`（WorkloadDataItem[]）与 `bars`（WorkloadBarConfig[]），由 App 通过 `getWorkloadData`/`getWorkloadBars` 提供。
 - **无底部 Legend**：仅悬浮 Tooltip 展示明细，`itemSorter` 保证 Tooltip 顺序与堆叠顺序一致。
+- **点击下钻个人详情（2026-07-07 新增）**：柱子可点击，经 `onMemberClick(memberId)` 回调由 App 调 `window.open` 在**新标签页**打开 `?view=team&role=&member=` 的个人详情视图（团队视角按该成员筛选，**不改当前页主筛选**）。App 启动时读取 URL 参数初始化 viewMode/role/selectedMemberIds。标题下有引导文案“点击成员柱可在新标签页查看其个人详情”。
 
 ### 3.3 业务流转链路 (`src/components/WorkflowPipeline.tsx` + `StageDetailModal.tsx`)
 - **来源**：`ff44ef3`（初始化）原版实现，`114828c` 曾改坏，已取回原版。**不要用客户泳道等错误版本覆盖。**
 - **三阶段布局**：投放前 / 投放中 / 投放后，整体包在“业务流转链路”白色模块容器内。
 - **me/others 标注**：`getWaitingStatus(waitMarket, waitMedia)` 基于 role 判断节点是「我处理」还是「待对方处理」。
-- **可点击查看详情**：点击节点弹 `StageDetailModal` 看积压单据明细（mock），便于催办。**不要删除此交互。**
+- **可点击查看详情**：点击节点弹 `StageDetailModal` 看积压单据明细（mock），便于跟进。**不要删除此交互。**
+- **明细负责人随选中成员（2026-07-07 修复 Whyhi 六-12）**：明细不再写死张三/李四/王五，由 App 传入 `assignees` 驱动——self 视图不展示负责人，team 视图按选中成员（空选则部门全员）轮转；count 均分且总和守恒。
+- **弹窗交互**：ESC 键 + 点击遮罩关闭；明细行“去处理/去查看”为 `<button>`（不跳顶），实际跳转待接入真实任务详情。
 
 ### 3.4 招募任务进度 (`src/components/TaskProgressTable.tsx`)
 - **漏斗数据列**：状态为 提报/报价/确认合作/执行（对应 `task.stages` 四字段）。
@@ -101,4 +108,4 @@
 4. **查 git 历史再下手**：`114828c`(存档) 曾把 App + 多组件改成错误版本（引用不存在的 `Stage` 等），`ff44ef3`(初始化) 的 WorkflowPipeline/StageDetailModal 是正确实现。修改前用 `git log -- <file>` + `git show <commit>:<file>` 查各版本，**不只看 HEAD**。
 
 ---
-*文档更新日期：2026-07-06*
+*文档更新日期：2026-07-07*
