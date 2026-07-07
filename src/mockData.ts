@@ -396,21 +396,19 @@ export const mockOrganization = [
   }
 ];
 
-/** 所有成员 ID 列表 */
-export const allMemberIds = mockOrganization.flatMap(d => d.children.map(c => c.id));
-
 // ============================================================
-// 视图/成员筛选联动派生函数（修复专家评估 Whyhi 一/三 处数据联动断裂）
+// 视图/成员筛选联动派生函数（修复专家评估 Whyhi 指出的三处数据联动断裂）
 // ============================================================
 
 /**
- * 趋势图 / 招募任务待办的缩放比例：以“当前视图的合作转化体量”占“团队总量”的比例驱动。
+ * 视图作用域缩放比例：以“当前视图的合作转化体量”占“团队总量”的比例，
+ * 同时驱动趋势图（getScaledTrendData）与招募任务待办（getScaledTasks）随视图/成员筛选联动。
  * - self 视图 → 个人占比（小于 1，趋势/待办随个人缩放）
  * - team 空选 → 1（团队全量基准）
  * - team 有选 → 选中成员聚合占比
  * 比例钳制到 [0.2, 1]，避免个人视图数值过小或为 0 导致图表失真。
  */
-export function getTrendScaleRatio(confirmedCooperations: number): number {
+export function getViewScopeRatio(confirmedCooperations: number): number {
   const teamTotal = mockInfluencerStatsTeam.confirmedCooperations;
   if (teamTotal <= 0) return 1;
   const ratio = confirmedCooperations / teamTotal;

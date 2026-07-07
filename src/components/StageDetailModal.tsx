@@ -45,7 +45,7 @@ export function StageDetailModal({
   const numItems = Math.max(1, Math.min(TASK_NAME_POOL.length, count));
   const base = Math.floor(count / numItems);
   let remainder = count % numItems;
-  const mockBreakdown = Array.from({ length: numItems }, (_, i) => {
+  const breakdownRows = Array.from({ length: numItems }, (_, i) => {
     const itemCount = base + (remainder > 0 ? 1 : 0);
     if (remainder > 0) remainder--;
     return {
@@ -88,7 +88,7 @@ export function StageDetailModal({
           )}
 
           <div className="space-y-3">
-            {mockBreakdown.map((item) => (
+            {breakdownRows.map((item) => (
               <div key={item.id} className="bg-white p-4 rounded-lg border border-slate-200 flex items-center justify-between shadow-sm hover:border-blue-300 transition-colors group">
                 <div>
                   <div className="font-medium text-slate-800 text-sm mb-1.5">{item.taskName}</div>

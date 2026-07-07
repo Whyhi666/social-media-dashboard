@@ -203,7 +203,7 @@ export function TaskProgressTable({ tasks, personalMode = true }: TaskProgressTa
                                      <span className="text-slate-600 text-xs font-medium">{personalMode ? '待我审稿' : '本组待审稿'}</span>
                                      <span className="font-mono font-bold text-amber-700 text-base">{task.myActionableItems.pendingMyReview}</span>
                                      <button type="button" title="跳转至原任务详情" className="ml-2 px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 rounded text-xs font-medium transition-colors flex items-center gap-1 group">
-                                       去审稿 <ArrowUpRight className="w-3 h-3 text-amber-500 group-hover:text-amber-700" />
+                                       去处理 <ArrowUpRight className="w-3 h-3 text-amber-500 group-hover:text-amber-700" />
                                      </button>
                                   </div>
                               )}
@@ -212,7 +212,7 @@ export function TaskProgressTable({ tasks, personalMode = true }: TaskProgressTa
                                      <span className="text-slate-600 text-xs font-medium">待审核支出</span>
                                      <span className="font-mono font-bold text-amber-700 text-base">{task.myActionableItems.pendingMyExpenseReview}</span>
                                      <button type="button" title="跳转至原任务详情" className="ml-2 px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 rounded text-xs font-medium transition-colors flex items-center gap-1 group">
-                                       去审核 <ArrowUpRight className="w-3 h-3 text-amber-500 group-hover:text-amber-700" />
+                                       去处理 <ArrowUpRight className="w-3 h-3 text-amber-500 group-hover:text-amber-700" />
                                      </button>
                                   </div>
                               )}

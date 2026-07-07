@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { WorkflowStats } from '../types';
 import { cn } from '../lib/utils';
-import { AlertCircle, Clock, CheckCircle2, ArrowUpRight, Workflow } from 'lucide-react';
+import { ArrowUpRight, Workflow } from 'lucide-react';
 import { StageDetailModal } from './StageDetailModal';
 
 interface WorkflowPipelineProps {

@@ -35,7 +35,7 @@
 - team 视图有选：`getAggregatedInfluencerStats(selectedMemberIds)` / `getAggregatedWorkflowStats(...)`。
 - 补充指标：`mockExecutionStatsSelf/Team`（累计执行次数/本月新增执行/本月新增招募任务）+ 招募任务总数 + workflowStats 派生（待执行）。
 - **三处数据联动（2026-07-07 修复专家评估 Whyhi 一）**：
-  - 趋势图（TrendChart）：`getScaledTrendData(role, ratio)`，`ratio = getTrendScaleRatio(influencerStats.confirmedCooperations)`（以当前视图合作转化体量占团队总量比例，钳制 [0.2,1]），随视图/成员筛选联动。
+  - 趋势图（TrendChart）：`getScaledTrendData(role, ratio)`，`ratio = getViewScopeRatio(influencerStats.confirmedCooperations)`（以当前视图合作转化体量占团队总量比例，钳制 [0.2,1]，同时驱动招募任务待办缩放），随视图/成员筛选联动。
   - 招募任务待办（TaskProgressTable）：`getScaledTasks(ratio)`，仅缩放 `myActionableItems`，项目级目标/已完成进度不变。
   - 招募任务总数：self=当前用户参与的任务数（关注或有待办），team=`mockTasks.length`（招募任务为组织级项目，选成员不改变其范围）。
 

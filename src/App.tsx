@@ -15,7 +15,7 @@ import {
   getAggregatedWorkflowStats,
   getWorkloadData,
   getWorkloadBars,
-  getTrendScaleRatio,
+  getViewScopeRatio,
   getScaledTrendData,
   getScaledTasks,
   getMemberName,
@@ -106,19 +106,19 @@ const App: React.FC = () => {
   const workloadBars = useMemo(() => getWorkloadBars(role), [role]);
 
   // 联动缩放比例：以当前视图合作转化体量占团队总量比例驱动趋势图与招募任务待办
-  const scaleRatio = useMemo(
-    () => getTrendScaleRatio(influencerStats.confirmedCooperations),
+  const viewScopeRatio = useMemo(
+    () => getViewScopeRatio(influencerStats.confirmedCooperations),
     [influencerStats]
   );
 
   // 趋势图随视图/成员筛选联动（修复 Whyhi 一-1：team 选成员后趋势图不变）
   const trendData = useMemo(
-    () => getScaledTrendData(role, scaleRatio),
-    [role, scaleRatio]
+    () => getScaledTrendData(role, viewScopeRatio),
+    [role, viewScopeRatio]
   );
 
   // 招募任务待办随视图/成员筛选联动（修复 Whyhi 一-2：“我的/本组待办”纹丝不动）
-  const tasks = useMemo(() => getScaledTasks(scaleRatio), [scaleRatio]);
+  const tasks = useMemo(() => getScaledTasks(viewScopeRatio), [viewScopeRatio]);
 
   // StageDetailModal 明细负责人：self 不展示；team 按选中成员，空选取部门全员（修复 Whyhi 六-12）
   const detailAssignees = useMemo(() => {

@@ -121,7 +121,7 @@
 
 ### Whyhi 产品评估
 - **（一）数据联动三处断裂** 1/2/3 ✅
-  - 1 TrendChart：新增 `getTrendScaleRatio`/`getScaledTrendData`，按当前视图合作转化体量占比缩放，随视图/成员筛选联动。
+  - 1 TrendChart：新增 `getViewScopeRatio`/`getScaledTrendData`，按当前视图合作转化体量占比缩放，随视图/成员筛选联动。
   - 2 TaskProgressTable：新增 `getScaledTasks`，仅缩放 `myActionableItems`（我的/本组待办），项目级进度不变。
   - 3 招募任务总数：self=参与任务数（关注或有待办），team=组织级全部任务（选成员不改变项目范围）。
 - **（二）4 身份模型** ⛔ 原型阶段需切换视角预览，故 currentUserId 随角色切换；上线后以真实登录身份固定并按角色权限显示选项，且同一人可兼具媒介/市场角色。
