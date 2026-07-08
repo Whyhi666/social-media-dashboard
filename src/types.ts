@@ -20,6 +20,10 @@ export interface ExecutionStats {
 }
 
 export interface WorkflowStats {
+  // 流量主申请与建联（投放前最前，媒介处理）
+  pendingTrafficOwnerApproval: number;
+  pendingCooperationIntention: number;
+
   // 提报与报价
   pendingMarketApprovalLeads: number;
   pendingMarketApprovalInfluencers: number;

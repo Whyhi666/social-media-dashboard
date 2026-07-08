@@ -85,6 +85,8 @@ export function WorkflowPipeline({ data, personalMode = false, role = 'media', a
   
   // 简化的文案
   const labels = {
+    pendingTrafficOwnerApproval: "待审批流量主申请",
+    pendingCooperationIntention: "待建联合作意向",
     pendingApproval: "待审批提报",
     pendingQuote: "待报价",
     quotedPendingApproval: "待审批报价",
@@ -134,7 +136,9 @@ export function WorkflowPipeline({ data, personalMode = false, role = 'media', a
           <h3 className="font-semibold text-slate-800 text-base">投放前</h3>
           <div className="h-px bg-slate-200 flex-1 ml-4"></div>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
+          <StageCard title={labels.pendingTrafficOwnerApproval} count={data.pendingTrafficOwnerApproval} waitingStatus={getWaitingStatus(false, true)} onClick={() => handleStageClick(labels.pendingTrafficOwnerApproval, data.pendingTrafficOwnerApproval, getWaitingStatus(false, true))} personalMode={personalMode} />
+          <StageCard title={labels.pendingCooperationIntention} count={data.pendingCooperationIntention} waitingStatus={getWaitingStatus(false, true)} onClick={() => handleStageClick(labels.pendingCooperationIntention, data.pendingCooperationIntention, getWaitingStatus(false, true))} personalMode={personalMode} />
           <StageCard title={labels.pendingApproval} count={data.pendingMarketApprovalLeads + data.pendingMarketApprovalInfluencers} waitingStatus={getWaitingStatus(true, false)} onClick={() => handleStageClick(labels.pendingApproval, data.pendingMarketApprovalLeads + data.pendingMarketApprovalInfluencers, getWaitingStatus(true, false))} personalMode={personalMode} />
           <StageCard title={labels.pendingQuote} count={data.approvedPendingQuote} waitingStatus={getWaitingStatus(false, true)} onClick={() => handleStageClick(labels.pendingQuote, data.approvedPendingQuote, getWaitingStatus(false, true))} personalMode={personalMode} />
           <StageCard title={labels.quotedPendingApproval} count={data.quotedPendingApproval} waitingStatus={getWaitingStatus(true, false)} onClick={() => handleStageClick(labels.quotedPendingApproval, data.quotedPendingApproval, getWaitingStatus(true, false))} personalMode={personalMode} />

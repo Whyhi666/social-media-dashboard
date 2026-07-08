@@ -29,6 +29,9 @@ export const mockInfluencerStatsTeam: InfluencerStats = {
 };
 
 export const mockWorkflowStatsSelf: WorkflowStats = {
+  pendingTrafficOwnerApproval: 9,
+  pendingCooperationIntention: 6,
+
   pendingMarketApprovalLeads: 14,
   pendingMarketApprovalInfluencers: 8,
   approvedPendingQuote: 5,
@@ -50,6 +53,9 @@ export const mockWorkflowStatsSelf: WorkflowStats = {
 };
 
 export const mockWorkflowStatsTeam: WorkflowStats = {
+  pendingTrafficOwnerApproval: 28,
+  pendingCooperationIntention: 20,
+
   pendingMarketApprovalLeads: 45,
   pendingMarketApprovalInfluencers: 18,
   approvedPendingQuote: 25,
@@ -104,16 +110,16 @@ export const mockMemberInfluencerStats: Record<string, InfluencerStats> = {
 };
 
 export const mockMemberWorkflowStats: Record<string, WorkflowStats> = {
-  u1: { pendingMarketApprovalLeads: 14, pendingMarketApprovalInfluencers: 8, approvedPendingQuote: 5, quotedPendingApproval: 12, approvedPendingCooperation: 4, confirmedPendingExecutionWaitDraft: 6, confirmedPendingExecutionResubmit: 3, pendingMyReview: 8, pendingOthersReview: 4, confirmedPendingExecutionFinalized: 5, startedPendingCompletion: 10, completed: 45, pendingExpenseGeneration: 3, pendingMyExpenseReview: 2, pendingOthersExpenseReview: 6, pendingPayment: 8 },
-  u2: { pendingMarketApprovalLeads: 12, pendingMarketApprovalInfluencers: 5, approvedPendingQuote: 8, quotedPendingApproval: 3, approvedPendingCooperation: 4, confirmedPendingExecutionWaitDraft: 15, confirmedPendingExecutionResubmit: 4, pendingMyReview: 5, pendingOthersReview: 6, confirmedPendingExecutionFinalized: 8, startedPendingCompletion: 12, completed: 80, pendingExpenseGeneration: 6, pendingMyExpenseReview: 3, pendingOthersExpenseReview: 4, pendingPayment: 10 },
-  u3: { pendingMarketApprovalLeads: 8, pendingMarketApprovalInfluencers: 4, approvedPendingQuote: 6, quotedPendingApproval: 5, approvedPendingCooperation: 3, confirmedPendingExecutionWaitDraft: 12, confirmedPendingExecutionResubmit: 2, pendingMyReview: 14, pendingOthersReview: 8, confirmedPendingExecutionFinalized: 6, startedPendingCompletion: 9, completed: 65, pendingExpenseGeneration: 5, pendingMyExpenseReview: 7, pendingOthersExpenseReview: 3, pendingPayment: 8 },
-  u4: { pendingMarketApprovalLeads: 6, pendingMarketApprovalInfluencers: 3, approvedPendingQuote: 4, quotedPendingApproval: 7, approvedPendingCooperation: 2, confirmedPendingExecutionWaitDraft: 9, confirmedPendingExecutionResubmit: 2, pendingMyReview: 6, pendingOthersReview: 5, confirmedPendingExecutionFinalized: 4, startedPendingCompletion: 11, completed: 55, pendingExpenseGeneration: 4, pendingMyExpenseReview: 1, pendingOthersExpenseReview: 2, pendingPayment: 6 },
-  u5: { pendingMarketApprovalLeads: 10, pendingMarketApprovalInfluencers: 6, approvedPendingQuote: 7, quotedPendingApproval: 4, approvedPendingCooperation: 5, confirmedPendingExecutionWaitDraft: 18, confirmedPendingExecutionResubmit: 5, pendingMyReview: 11, pendingOthersReview: 7, confirmedPendingExecutionFinalized: 9, startedPendingCompletion: 15, completed: 90, pendingExpenseGeneration: 8, pendingMyExpenseReview: 4, pendingOthersExpenseReview: 6, pendingPayment: 12 },
-  u6: { pendingMarketApprovalLeads: 4, pendingMarketApprovalInfluencers: 2, approvedPendingQuote: 3, quotedPendingApproval: 5, approvedPendingCooperation: 2, confirmedPendingExecutionWaitDraft: 5, confirmedPendingExecutionResubmit: 1, pendingMyReview: 4, pendingOthersReview: 3, confirmedPendingExecutionFinalized: 3, startedPendingCompletion: 6, completed: 35, pendingExpenseGeneration: 2, pendingMyExpenseReview: 2, pendingOthersExpenseReview: 1, pendingPayment: 4 },
-  u7: { pendingMarketApprovalLeads: 11, pendingMarketApprovalInfluencers: 5, approvedPendingQuote: 9, quotedPendingApproval: 6, approvedPendingCooperation: 4, confirmedPendingExecutionWaitDraft: 14, confirmedPendingExecutionResubmit: 3, pendingMyReview: 9, pendingOthersReview: 5, confirmedPendingExecutionFinalized: 7, startedPendingCompletion: 12, completed: 70, pendingExpenseGeneration: 7, pendingMyExpenseReview: 5, pendingOthersExpenseReview: 3, pendingPayment: 9 },
-  u8: { pendingMarketApprovalLeads: 5, pendingMarketApprovalInfluencers: 4, approvedPendingQuote: 5, quotedPendingApproval: 3, approvedPendingCooperation: 3, confirmedPendingExecutionWaitDraft: 7, confirmedPendingExecutionResubmit: 2, pendingMyReview: 3, pendingOthersReview: 6, confirmedPendingExecutionFinalized: 5, startedPendingCompletion: 8, completed: 45, pendingExpenseGeneration: 3, pendingMyExpenseReview: 1, pendingOthersExpenseReview: 2, pendingPayment: 5 },
-  u9: { pendingMarketApprovalLeads: 15, pendingMarketApprovalInfluencers: 7, approvedPendingQuote: 10, quotedPendingApproval: 8, approvedPendingCooperation: 6, confirmedPendingExecutionWaitDraft: 20, confirmedPendingExecutionResubmit: 6, pendingMyReview: 12, pendingOthersReview: 9, confirmedPendingExecutionFinalized: 10, startedPendingCompletion: 18, completed: 110, pendingExpenseGeneration: 9, pendingMyExpenseReview: 6, pendingOthersExpenseReview: 5, pendingPayment: 15 },
-  u10: { pendingMarketApprovalLeads: 3, pendingMarketApprovalInfluencers: 2, approvedPendingQuote: 2, quotedPendingApproval: 4, approvedPendingCooperation: 1, confirmedPendingExecutionWaitDraft: 4, confirmedPendingExecutionResubmit: 1, pendingMyReview: 2, pendingOthersReview: 2, confirmedPendingExecutionFinalized: 2, startedPendingCompletion: 5, completed: 25, pendingExpenseGeneration: 1, pendingMyExpenseReview: 2, pendingOthersExpenseReview: 1, pendingPayment: 3 },
+  u1: { pendingTrafficOwnerApproval: 9, pendingCooperationIntention: 6, pendingMarketApprovalLeads: 14, pendingMarketApprovalInfluencers: 8, approvedPendingQuote: 5, quotedPendingApproval: 12, approvedPendingCooperation: 4, confirmedPendingExecutionWaitDraft: 6, confirmedPendingExecutionResubmit: 3, pendingMyReview: 8, pendingOthersReview: 4, confirmedPendingExecutionFinalized: 5, startedPendingCompletion: 10, completed: 45, pendingExpenseGeneration: 3, pendingMyExpenseReview: 2, pendingOthersExpenseReview: 6, pendingPayment: 8 },
+  u2: { pendingTrafficOwnerApproval: 12, pendingCooperationIntention: 8, pendingMarketApprovalLeads: 12, pendingMarketApprovalInfluencers: 5, approvedPendingQuote: 8, quotedPendingApproval: 3, approvedPendingCooperation: 4, confirmedPendingExecutionWaitDraft: 15, confirmedPendingExecutionResubmit: 4, pendingMyReview: 5, pendingOthersReview: 6, confirmedPendingExecutionFinalized: 8, startedPendingCompletion: 12, completed: 80, pendingExpenseGeneration: 6, pendingMyExpenseReview: 3, pendingOthersExpenseReview: 4, pendingPayment: 10 },
+  u3: { pendingTrafficOwnerApproval: 8, pendingCooperationIntention: 5, pendingMarketApprovalLeads: 8, pendingMarketApprovalInfluencers: 4, approvedPendingQuote: 6, quotedPendingApproval: 5, approvedPendingCooperation: 3, confirmedPendingExecutionWaitDraft: 12, confirmedPendingExecutionResubmit: 2, pendingMyReview: 14, pendingOthersReview: 8, confirmedPendingExecutionFinalized: 6, startedPendingCompletion: 9, completed: 65, pendingExpenseGeneration: 5, pendingMyExpenseReview: 7, pendingOthersExpenseReview: 3, pendingPayment: 8 },
+  u4: { pendingTrafficOwnerApproval: 6, pendingCooperationIntention: 4, pendingMarketApprovalLeads: 6, pendingMarketApprovalInfluencers: 3, approvedPendingQuote: 4, quotedPendingApproval: 7, approvedPendingCooperation: 2, confirmedPendingExecutionWaitDraft: 9, confirmedPendingExecutionResubmit: 2, pendingMyReview: 6, pendingOthersReview: 5, confirmedPendingExecutionFinalized: 4, startedPendingCompletion: 11, completed: 55, pendingExpenseGeneration: 4, pendingMyExpenseReview: 1, pendingOthersExpenseReview: 2, pendingPayment: 6 },
+  u5: { pendingTrafficOwnerApproval: 10, pendingCooperationIntention: 7, pendingMarketApprovalLeads: 10, pendingMarketApprovalInfluencers: 6, approvedPendingQuote: 7, quotedPendingApproval: 4, approvedPendingCooperation: 5, confirmedPendingExecutionWaitDraft: 18, confirmedPendingExecutionResubmit: 5, pendingMyReview: 11, pendingOthersReview: 7, confirmedPendingExecutionFinalized: 9, startedPendingCompletion: 15, completed: 90, pendingExpenseGeneration: 8, pendingMyExpenseReview: 4, pendingOthersExpenseReview: 6, pendingPayment: 12 },
+  u6: { pendingTrafficOwnerApproval: 4, pendingCooperationIntention: 3, pendingMarketApprovalLeads: 4, pendingMarketApprovalInfluencers: 2, approvedPendingQuote: 3, quotedPendingApproval: 5, approvedPendingCooperation: 2, confirmedPendingExecutionWaitDraft: 5, confirmedPendingExecutionResubmit: 1, pendingMyReview: 4, pendingOthersReview: 3, confirmedPendingExecutionFinalized: 3, startedPendingCompletion: 6, completed: 35, pendingExpenseGeneration: 2, pendingMyExpenseReview: 2, pendingOthersExpenseReview: 1, pendingPayment: 4 },
+  u7: { pendingTrafficOwnerApproval: 11, pendingCooperationIntention: 6, pendingMarketApprovalLeads: 11, pendingMarketApprovalInfluencers: 5, approvedPendingQuote: 9, quotedPendingApproval: 6, approvedPendingCooperation: 4, confirmedPendingExecutionWaitDraft: 14, confirmedPendingExecutionResubmit: 3, pendingMyReview: 9, pendingOthersReview: 5, confirmedPendingExecutionFinalized: 7, startedPendingCompletion: 12, completed: 70, pendingExpenseGeneration: 7, pendingMyExpenseReview: 5, pendingOthersExpenseReview: 3, pendingPayment: 9 },
+  u8: { pendingTrafficOwnerApproval: 7, pendingCooperationIntention: 5, pendingMarketApprovalLeads: 5, pendingMarketApprovalInfluencers: 4, approvedPendingQuote: 5, quotedPendingApproval: 3, approvedPendingCooperation: 3, confirmedPendingExecutionWaitDraft: 7, confirmedPendingExecutionResubmit: 2, pendingMyReview: 3, pendingOthersReview: 6, confirmedPendingExecutionFinalized: 5, startedPendingCompletion: 8, completed: 45, pendingExpenseGeneration: 3, pendingMyExpenseReview: 1, pendingOthersExpenseReview: 2, pendingPayment: 5 },
+  u9: { pendingTrafficOwnerApproval: 13, pendingCooperationIntention: 9, pendingMarketApprovalLeads: 15, pendingMarketApprovalInfluencers: 7, approvedPendingQuote: 10, quotedPendingApproval: 8, approvedPendingCooperation: 6, confirmedPendingExecutionWaitDraft: 20, confirmedPendingExecutionResubmit: 6, pendingMyReview: 12, pendingOthersReview: 9, confirmedPendingExecutionFinalized: 10, startedPendingCompletion: 18, completed: 110, pendingExpenseGeneration: 9, pendingMyExpenseReview: 6, pendingOthersExpenseReview: 5, pendingPayment: 15 },
+  u10: { pendingTrafficOwnerApproval: 5, pendingCooperationIntention: 3, pendingMarketApprovalLeads: 3, pendingMarketApprovalInfluencers: 2, approvedPendingQuote: 2, quotedPendingApproval: 4, approvedPendingCooperation: 1, confirmedPendingExecutionWaitDraft: 4, confirmedPendingExecutionResubmit: 1, pendingMyReview: 2, pendingOthersReview: 2, confirmedPendingExecutionFinalized: 2, startedPendingCompletion: 5, completed: 25, pendingExpenseGeneration: 1, pendingMyExpenseReview: 2, pendingOthersExpenseReview: 1, pendingPayment: 3 },
 };
 
 // ============================================================
@@ -121,16 +127,16 @@ export const mockMemberWorkflowStats: Record<string, WorkflowStats> = {
 // ============================================================
 
 export const mediaWorkloadData: WorkloadDataItem[] = [
-  { id: "u1", name: "张三", 待报价: 5, 待确认合作: 4, "待执行(待提稿)": 6, "待执行(待重新提稿)": 3, 待审稿: 8, 待他人审稿: 3, "待执行(已定稿)": 4, 待生成支出: 3, 待付款: 2 },
-  { id: "u2", name: "李四", 待报价: 8, 待确认合作: 4, "待执行(待提稿)": 15, "待执行(待重新提稿)": 2, 待审稿: 5, 待他人审稿: 2, "待执行(已定稿)": 6, 待生成支出: 6, 待付款: 4 },
-  { id: "u3", name: "王五", 待报价: 6, 待确认合作: 3, "待执行(待提稿)": 12, "待执行(待重新提稿)": 4, 待审稿: 14, 待他人审稿: 4, "待执行(已定稿)": 5, 待生成支出: 5, 待付款: 1 },
-  { id: "u4", name: "赵六", 待报价: 12, 待确认合作: 6, "待执行(待提稿)": 8, "待执行(待重新提稿)": 1, 待审稿: 6, 待他人审稿: 5, "待执行(已定稿)": 9, 待生成支出: 4, 待付款: 3 },
-  { id: "u5", name: "孙七", 待报价: 3, 待确认合作: 8, "待执行(待提稿)": 4, "待执行(待重新提稿)": 5, 待审稿: 11, 待他人审稿: 1, "待执行(已定稿)": 3, 待生成支出: 8, 待付款: 5 },
-  { id: "u6", name: "周八", 待报价: 9, 待确认合作: 2, "待执行(待提稿)": 10, "待执行(待重新提稿)": 2, 待审稿: 4, 待他人审稿: 6, "待执行(已定稿)": 8, 待生成支出: 2, 待付款: 1 },
-  { id: "u7", name: "吴九", 待报价: 4, 待确认合作: 9, "待执行(待提稿)": 5, "待执行(待重新提稿)": 6, 待审稿: 9, 待他人审稿: 2, "待执行(已定稿)": 12, 待生成支出: 7, 待付款: 6 },
-  { id: "u8", name: "郑十", 待报价: 15, 待确认合作: 1, "待执行(待提稿)": 9, "待执行(待重新提稿)": 3, 待审稿: 3, 待他人审稿: 8, "待执行(已定稿)": 4, 待生成支出: 1, 待付款: 2 },
-  { id: "u9", name: "钱一", 待报价: 2, 待确认合作: 12, "待执行(待提稿)": 14, "待执行(待重新提稿)": 1, 待审稿: 12, 待他人审稿: 3, "待执行(已定稿)": 6, 待生成支出: 9, 待付款: 8 },
-  { id: "u10", name: "陈二", 待报价: 7, 待确认合作: 5, "待执行(待提稿)": 3, "待执行(待重新提稿)": 8, 待审稿: 2, 待他人审稿: 9, "待执行(已定稿)": 2, 待生成支出: 4, 待付款: 1 },
+  { id: "u1", name: "张三", 待审批流量主申请: 9, 待建联合作意向: 6, 待报价: 5, 待确认合作: 4, "待执行(待提稿)": 6, "待执行(待重新提稿)": 3, 待审稿: 8, 待他人审稿: 3, "待执行(已定稿)": 4, 待生成支出: 3, 待付款: 2 },
+  { id: "u2", name: "李四", 待审批流量主申请: 12, 待建联合作意向: 8, 待报价: 8, 待确认合作: 4, "待执行(待提稿)": 15, "待执行(待重新提稿)": 2, 待审稿: 5, 待他人审稿: 2, "待执行(已定稿)": 6, 待生成支出: 6, 待付款: 4 },
+  { id: "u3", name: "王五", 待审批流量主申请: 8, 待建联合作意向: 5, 待报价: 6, 待确认合作: 3, "待执行(待提稿)": 12, "待执行(待重新提稿)": 4, 待审稿: 14, 待他人审稿: 4, "待执行(已定稿)": 5, 待生成支出: 5, 待付款: 1 },
+  { id: "u4", name: "赵六", 待审批流量主申请: 6, 待建联合作意向: 4, 待报价: 12, 待确认合作: 6, "待执行(待提稿)": 8, "待执行(待重新提稿)": 1, 待审稿: 6, 待他人审稿: 5, "待执行(已定稿)": 9, 待生成支出: 4, 待付款: 3 },
+  { id: "u5", name: "孙七", 待审批流量主申请: 10, 待建联合作意向: 7, 待报价: 3, 待确认合作: 8, "待执行(待提稿)": 4, "待执行(待重新提稿)": 5, 待审稿: 11, 待他人审稿: 1, "待执行(已定稿)": 3, 待生成支出: 8, 待付款: 5 },
+  { id: "u6", name: "周八", 待审批流量主申请: 4, 待建联合作意向: 3, 待报价: 9, 待确认合作: 2, "待执行(待提稿)": 10, "待执行(待重新提稿)": 2, 待审稿: 4, 待他人审稿: 6, "待执行(已定稿)": 8, 待生成支出: 2, 待付款: 1 },
+  { id: "u7", name: "吴九", 待审批流量主申请: 11, 待建联合作意向: 6, 待报价: 4, 待确认合作: 9, "待执行(待提稿)": 5, "待执行(待重新提稿)": 6, 待审稿: 9, 待他人审稿: 2, "待执行(已定稿)": 12, 待生成支出: 7, 待付款: 6 },
+  { id: "u8", name: "郑十", 待审批流量主申请: 7, 待建联合作意向: 5, 待报价: 15, 待确认合作: 1, "待执行(待提稿)": 9, "待执行(待重新提稿)": 3, 待审稿: 3, 待他人审稿: 8, "待执行(已定稿)": 4, 待生成支出: 1, 待付款: 2 },
+  { id: "u9", name: "钱一", 待审批流量主申请: 13, 待建联合作意向: 9, 待报价: 2, 待确认合作: 12, "待执行(待提稿)": 14, "待执行(待重新提稿)": 1, 待审稿: 12, 待他人审稿: 3, "待执行(已定稿)": 6, 待生成支出: 9, 待付款: 8 },
+  { id: "u10", name: "陈二", 待审批流量主申请: 5, 待建联合作意向: 3, 待报价: 7, 待确认合作: 5, "待执行(待提稿)": 3, "待执行(待重新提稿)": 8, 待审稿: 2, 待他人审稿: 9, "待执行(已定稿)": 2, 待生成支出: 4, 待付款: 1 },
 ];
 
 export const marketWorkloadData: WorkloadDataItem[] = [
@@ -151,6 +157,8 @@ export const marketWorkloadData: WorkloadDataItem[] = [
 // ============================================================
 
 export const mediaBars: WorkloadBarConfig[] = [
+  { key: "待审批流量主申请", color: "#e2e8f0" },
+  { key: "待建联合作意向", color: "#bfdbfe" },
   { key: "待报价", color: "#cbd5e1" },
   { key: "待确认合作", color: "#93c5fd" },
   { key: "待执行(待提稿)", color: "#fcd34d" },
@@ -196,13 +204,13 @@ export function getAggregatedInfluencerStats(memberIds: string[]): InfluencerSta
 /** 根据选中成员 IDs 计算聚合的 WorkflowStats */
 export function getAggregatedWorkflowStats(memberIds: string[]): WorkflowStats {
   if (memberIds.length === 0) {
-    return { pendingMarketApprovalLeads: 0, pendingMarketApprovalInfluencers: 0, approvedPendingQuote: 0, quotedPendingApproval: 0, approvedPendingCooperation: 0, confirmedPendingExecutionWaitDraft: 0, confirmedPendingExecutionResubmit: 0, pendingMyReview: 0, pendingOthersReview: 0, confirmedPendingExecutionFinalized: 0, startedPendingCompletion: 0, completed: 0, pendingExpenseGeneration: 0, pendingMyExpenseReview: 0, pendingOthersExpenseReview: 0, pendingPayment: 0 };
+    return { pendingTrafficOwnerApproval: 0, pendingCooperationIntention: 0, pendingMarketApprovalLeads: 0, pendingMarketApprovalInfluencers: 0, approvedPendingQuote: 0, quotedPendingApproval: 0, approvedPendingCooperation: 0, confirmedPendingExecutionWaitDraft: 0, confirmedPendingExecutionResubmit: 0, pendingMyReview: 0, pendingOthersReview: 0, confirmedPendingExecutionFinalized: 0, startedPendingCompletion: 0, completed: 0, pendingExpenseGeneration: 0, pendingMyExpenseReview: 0, pendingOthersExpenseReview: 0, pendingPayment: 0 };
   }
   if (memberIds.length === 1 && mockMemberWorkflowStats[memberIds[0]]) {
     return mockMemberWorkflowStats[memberIds[0]];
   }
   // 多选 → 聚合
-  const keys: (keyof WorkflowStats)[] = ['pendingMarketApprovalLeads', 'pendingMarketApprovalInfluencers', 'approvedPendingQuote', 'quotedPendingApproval', 'approvedPendingCooperation', 'confirmedPendingExecutionWaitDraft', 'confirmedPendingExecutionResubmit', 'pendingMyReview', 'pendingOthersReview', 'confirmedPendingExecutionFinalized', 'startedPendingCompletion', 'completed', 'pendingExpenseGeneration', 'pendingMyExpenseReview', 'pendingOthersExpenseReview', 'pendingPayment'];
+  const keys: (keyof WorkflowStats)[] = ['pendingTrafficOwnerApproval', 'pendingCooperationIntention', 'pendingMarketApprovalLeads', 'pendingMarketApprovalInfluencers', 'approvedPendingQuote', 'quotedPendingApproval', 'approvedPendingCooperation', 'confirmedPendingExecutionWaitDraft', 'confirmedPendingExecutionResubmit', 'pendingMyReview', 'pendingOthersReview', 'confirmedPendingExecutionFinalized', 'startedPendingCompletion', 'completed', 'pendingExpenseGeneration', 'pendingMyExpenseReview', 'pendingOthersExpenseReview', 'pendingPayment'];
   const result = { ...(mockMemberWorkflowStats[memberIds[0]] || mockWorkflowStatsSelf) };
   for (const key of keys) {
     result[key] = memberIds.reduce((sum, id) => sum + ((mockMemberWorkflowStats[id]?.[key]) || 0), 0);
