@@ -75,6 +75,10 @@ const TrendChart: React.FC<TrendChartProps> = ({ data, loading }) => {
                 fontSize: '12px',
               }}
               labelFormatter={(label: string) => `日期: ${label}`}
+              itemSorter={(item: any) => {
+                const order = ['value1', 'value3', 'value2'];
+                return order.indexOf(item.dataKey);
+              }}
             />
             <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '8px' }} iconSize={8} />
             <Line
@@ -82,6 +86,15 @@ const TrendChart: React.FC<TrendChartProps> = ({ data, loading }) => {
               dataKey="value1"
               name={dataset.label1}
               stroke="#3b82f6"
+              strokeWidth={2}
+              dot={{ r: 3 }}
+              activeDot={{ r: 5 }}
+            />
+            <Line
+              type="monotone"
+              dataKey="value3"
+              name={dataset.label3}
+              stroke="#f59e0b"
               strokeWidth={2}
               dot={{ r: 3 }}
               activeDot={{ r: 5 }}

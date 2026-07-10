@@ -8,7 +8,9 @@
 - **组织架构筛选**：按角色显示对应部门成员，支持全选/半选，权限提示独立展示。
 - **响应式负载图表**：自适应横向滚动的堆叠柱状图，清晰呈现团队工作流瓶颈。
 - **业务流转链路**：三阶段（投放前/中/后）链路，区分我处理/待对方，点击节点查看积压明细。
+- **执行趋势**：提报数/执行数/确认合作三条线，支持 7d/14d/30d 切换。
 - **招募任务进度**：漏斗数据（提报/报价/确认合作/执行）+ 我的待办/本组待办展开。
+- **字段说明入口**：顶部导航一键查看各模块指标含义与统计口径。
 
 ## 🛠 技术栈
 - **核心框架**: React 19 + Vite
@@ -51,7 +53,9 @@ npm run lint     # TypeScript 类型检查
   - `TaskProgressTable` 招募任务进度
   - `MemberSelect` 组织架构成员筛选
   - `PersonalMemo` 工作备忘
+  - `FieldDocModal` 字段说明模态框
   - `Skeleton` 骨架屏/空状态/错误状态
+- `/src/fieldDoc.ts` - 字段说明文档数据（各模块指标含义与口径）
 - `/src/mockData.ts` - Mock 数据与聚合函数
 - `/src/types.ts` - TypeScript 类型定义
 - `/src/App.tsx` - 主应用入口（viewMode/role/selectedMemberIds 三态驱动）

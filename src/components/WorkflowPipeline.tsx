@@ -86,23 +86,25 @@ export function WorkflowPipeline({ data, personalMode = false, role = 'media', a
   // 简化的文案
   const labels = {
     pendingTrafficOwnerApproval: "待审批流量主申请",
-    pendingCooperationIntention: "待建联合作意向",
+    pendingCooperationIntention: "待沟通合作意向",
+    pendingCooperationCommunicating: "合作意向沟通中",
+    pendingReadyToSubmit: "可合作待提报/自申请",
     pendingApproval: "待审批提报",
     pendingQuote: "待报价",
     quotedPendingApproval: "待审批报价",
+    pendingTrafficOwnerConfirm: "待流量主确认合作",
     pendingCooperation: "待确认合作",
-      
+
     pendingExecWaitDraft: "待执行(待提稿)",
     pendingExecResubmit: "待执行(待重新提稿)",
     pendingReview: "待审稿",
     pendingOthersReview: "待他人审稿",
     pendingExecFinalized: "待执行(已定稿)",
     pendingCompletion: "待完结执行",
-      
-    pendingExpense: "待生成支出",
+
     pendingMyExpenseReview: "待我审核支出",
     pendingOthersExpenseReview: "待他人审核支出",
-    pendingPayment: "待付款",
+    pendingPayment: "待申请支付",
   };
 
   const getWaitingStatus = (waitMarket: boolean, waitMedia: boolean) => {
@@ -136,12 +138,15 @@ export function WorkflowPipeline({ data, personalMode = false, role = 'media', a
           <h3 className="font-semibold text-slate-800 text-base">投放前</h3>
           <div className="h-px bg-slate-200 flex-1 ml-4"></div>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           <StageCard title={labels.pendingTrafficOwnerApproval} count={data.pendingTrafficOwnerApproval} waitingStatus={getWaitingStatus(false, true)} onClick={() => handleStageClick(labels.pendingTrafficOwnerApproval, data.pendingTrafficOwnerApproval, getWaitingStatus(false, true))} personalMode={personalMode} />
           <StageCard title={labels.pendingCooperationIntention} count={data.pendingCooperationIntention} waitingStatus={getWaitingStatus(false, true)} onClick={() => handleStageClick(labels.pendingCooperationIntention, data.pendingCooperationIntention, getWaitingStatus(false, true))} personalMode={personalMode} />
-          <StageCard title={labels.pendingApproval} count={data.pendingMarketApprovalLeads + data.pendingMarketApprovalInfluencers} waitingStatus={getWaitingStatus(true, false)} onClick={() => handleStageClick(labels.pendingApproval, data.pendingMarketApprovalLeads + data.pendingMarketApprovalInfluencers, getWaitingStatus(true, false))} personalMode={personalMode} />
+          <StageCard title={labels.pendingCooperationCommunicating} count={data.pendingCooperationCommunicating} waitingStatus={getWaitingStatus(false, true)} onClick={() => handleStageClick(labels.pendingCooperationCommunicating, data.pendingCooperationCommunicating, getWaitingStatus(false, true))} personalMode={personalMode} />
+          <StageCard title={labels.pendingReadyToSubmit} count={data.pendingReadyToSubmit} waitingStatus={getWaitingStatus(false, true)} onClick={() => handleStageClick(labels.pendingReadyToSubmit, data.pendingReadyToSubmit, getWaitingStatus(false, true))} personalMode={personalMode} />
+          <StageCard title={labels.pendingApproval} count={data.pendingMarketApprovalInfluencers} waitingStatus={getWaitingStatus(true, false)} onClick={() => handleStageClick(labels.pendingApproval, data.pendingMarketApprovalInfluencers, getWaitingStatus(true, false))} personalMode={personalMode} />
           <StageCard title={labels.pendingQuote} count={data.approvedPendingQuote} waitingStatus={getWaitingStatus(false, true)} onClick={() => handleStageClick(labels.pendingQuote, data.approvedPendingQuote, getWaitingStatus(false, true))} personalMode={personalMode} />
           <StageCard title={labels.quotedPendingApproval} count={data.quotedPendingApproval} waitingStatus={getWaitingStatus(true, false)} onClick={() => handleStageClick(labels.quotedPendingApproval, data.quotedPendingApproval, getWaitingStatus(true, false))} personalMode={personalMode} />
+          <StageCard title={labels.pendingTrafficOwnerConfirm} count={data.pendingTrafficOwnerConfirm} waitingStatus={getWaitingStatus(false, true)} onClick={() => handleStageClick(labels.pendingTrafficOwnerConfirm, data.pendingTrafficOwnerConfirm, getWaitingStatus(false, true))} personalMode={personalMode} />
           <StageCard title={labels.pendingCooperation} count={data.approvedPendingCooperation} waitingStatus={getWaitingStatus(false, true)} onClick={() => handleStageClick(labels.pendingCooperation, data.approvedPendingCooperation, getWaitingStatus(false, true))} personalMode={personalMode} />
         </div>
       </div>
@@ -154,7 +159,7 @@ export function WorkflowPipeline({ data, personalMode = false, role = 'media', a
           <h3 className="font-semibold text-slate-800 text-base">投放中</h3>
           <div className="h-px bg-slate-200 flex-1 ml-4"></div>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           <StageCard title={labels.pendingExecWaitDraft} count={data.confirmedPendingExecutionWaitDraft} waitingStatus={getWaitingStatus(false, true)} onClick={() => handleStageClick(labels.pendingExecWaitDraft, data.confirmedPendingExecutionWaitDraft, getWaitingStatus(false, true))} personalMode={personalMode} />
           <StageCard title={labels.pendingExecResubmit} count={data.confirmedPendingExecutionResubmit} waitingStatus={getWaitingStatus(false, true)} onClick={() => handleStageClick(labels.pendingExecResubmit, data.confirmedPendingExecutionResubmit, getWaitingStatus(false, true))} personalMode={personalMode} />
           <StageCard title={labels.pendingReview} count={data.pendingMyReview} waitingStatus="me" onClick={() => handleStageClick(labels.pendingReview, data.pendingMyReview, "me")} personalMode={personalMode} />
@@ -172,8 +177,7 @@ export function WorkflowPipeline({ data, personalMode = false, role = 'media', a
           <h3 className="font-semibold text-slate-800 text-base">投放后</h3>
           <div className="h-px bg-slate-200 flex-1 ml-4"></div>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <StageCard title={labels.pendingExpense} count={data.pendingExpenseGeneration} waitingStatus={getWaitingStatus(false, true)} onClick={() => handleStageClick(labels.pendingExpense, data.pendingExpenseGeneration, getWaitingStatus(false, true))} personalMode={personalMode} />
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           <StageCard title={labels.pendingMyExpenseReview} count={data.pendingMyExpenseReview} waitingStatus="me" onClick={() => handleStageClick(labels.pendingMyExpenseReview, data.pendingMyExpenseReview, "me")} personalMode={personalMode} />
           <StageCard title={labels.pendingOthersExpenseReview} count={data.pendingOthersExpenseReview} waitingStatus="others" onClick={() => handleStageClick(labels.pendingOthersExpenseReview, data.pendingOthersExpenseReview, "others")} personalMode={personalMode} />
           <StageCard title={labels.pendingPayment} count={data.pendingPayment} waitingStatus={getWaitingStatus(false, true)} onClick={() => handleStageClick(labels.pendingPayment, data.pendingPayment, getWaitingStatus(false, true))} personalMode={personalMode} />

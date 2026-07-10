@@ -20,31 +20,29 @@ export interface ExecutionStats {
 }
 
 export interface WorkflowStats {
-  // 流量主申请与建联（投放前最前，媒介处理）
-  pendingTrafficOwnerApproval: number;
-  pendingCooperationIntention: number;
+  // 投放前（流量主申请与沟通 / 提报 / 报价）
+  pendingTrafficOwnerApproval: number;       // 待审批流量主申请
+  pendingCooperationIntention: number;        // 待沟通合作意向
+  pendingCooperationCommunicating: number;    // 合作意向沟通中
+  pendingReadyToSubmit: number;               // 可合作待提报/自申请
+  pendingMarketApprovalInfluencers: number;   // 待审批提报（合并线索/达人）
+  approvedPendingQuote: number;               // 待报价
+  quotedPendingApproval: number;              // 待审批报价
+  pendingTrafficOwnerConfirm: number;         // 待流量主确认合作
+  approvedPendingCooperation: number;         // 待确认合作
 
-  // 提报与报价
-  pendingMarketApprovalLeads: number;
-  pendingMarketApprovalInfluencers: number;
-  approvedPendingQuote: number;
-  quotedPendingApproval: number;
-  approvedPendingCooperation: number;
-  
-  // 执行与审稿
+  // 投放中（执行与审稿）
   confirmedPendingExecutionWaitDraft: number;
   confirmedPendingExecutionResubmit: number;
   pendingMyReview: number;
   pendingOthersReview: number;
   confirmedPendingExecutionFinalized: number;
   startedPendingCompletion: number;
-  completed: number;
-  
-  // 结算
-  pendingExpenseGeneration: number;
+
+  // 投放后（结算）
   pendingMyExpenseReview: number;
   pendingOthersExpenseReview: number;
-  pendingPayment: number;
+  pendingPayment: number;                     // 待申请支付
 }
 
 export interface RecruitmentTask {
