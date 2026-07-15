@@ -53,9 +53,7 @@ npm run lint     # TypeScript 类型检查
   - `TaskProgressTable` 招募任务进度
   - `MemberSelect` 组织架构成员筛选
   - `PersonalMemo` 工作备忘
-  - `FieldDocModal` 字段说明模态框
   - `Skeleton` 骨架屏/空状态/错误状态
-- `/src/fieldDoc.ts` - 字段说明文档数据（各模块指标含义与口径）
 - `/src/mockData.ts` - Mock 数据与聚合函数
 - `/src/types.ts` - TypeScript 类型定义
 - `/src/App.tsx` - 主应用入口（viewMode/role/selectedMemberIds 三态驱动）

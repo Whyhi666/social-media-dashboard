@@ -59,7 +59,7 @@
 1. **数据模型重构要全链路同步**：改 `WorkflowStats` 字段（删/加/改名）时，必须同步 `types.ts` + `mockData.ts`（self/team/10 成员/聚合零值/keys 数组/负载 workload/bars）+ `WorkflowPipeline.tsx`（labels + StageCard）+ 趋势数据。漏改聚合 `keys` 数组会导致多选聚合时新字段取 `undefined`->`NaN`。改完跑 `npm run lint`（tsc）能抓出大部分遗漏引用。
 2. **recharts Tooltip 顺序不跟随 Line**：三条线的 Tooltip 顺序不保证按 `<Line>` JSX 顺序，须用 `<Tooltip itemSorter={item => order.indexOf(item.dataKey)}>` 强制；Legend 顺序才跟随 `<Line>` 顺序。
 3. **dev 残留进程占端口**：多次启停 dev 会留下残留 node 进程占用端口（3000-3005 被占），导致新 dev 用高端口且 HMR 可能断裂。用 `netstat -ano | grep LISTENING | grep ":<port> "` 找 PID + `taskkill /F /PID` 清理。
-4. **字段说明用结构化数据文件**：避免每个字段旁加图标（花里胡哨），改为一个入口（header 按钮）+ 模态框。内容放 `src/fieldDoc.ts`（`{title, desc, items}` 结构），组件只渲染，便于非开发人员改文案。
+4. **字段说明链接到文档**：避免每个字段旁加图标（花里胡哨），改为一个入口（header 按钮）点击在新标签页打开 `DATA_SPEC.md`。文档由业务方维护，前端不内置内容、无模态框，避免重复维护。
 5. **负载图只放 me 节点**：业务规则--负载图只堆叠本角色需处理的节点，待他人处理节点（待他人审稿/待他人审核支出）不计入。流转链路仍展示全部节点（me/others 标注）。
 
 ---

@@ -6,7 +6,6 @@ import TeamWorkloadChart from './components/TeamWorkloadChart';
 import { MemberSelect } from './components/MemberSelect';
 import { PersonalMemo } from './components/PersonalMemo';
 import { TaskProgressTable } from './components/TaskProgressTable';
-import { FieldDocModal } from './components/FieldDocModal';
 import {
   mockMemberInfluencerStats,
   mockMemberWorkflowStats,
@@ -47,7 +46,6 @@ const App: React.FC = () => {
   const [selectedMemberIds, setSelectedMemberIds] = useState<string[]>(paramMember ? [paramMember] : []);
   const [loading, setLoading] = useState(false);
   const [updatedAt, setUpdatedAt] = useState<Date>(() => new Date());
-  const [fieldDocOpen, setFieldDocOpen] = useState(false);
 
   // mock 当前登录用户：随角色切换到对应部门（媒介→张三, 市场→李四）
   // 说明：原型阶段方便切换视角预览；上线后将以真实登录身份固定，并按角色权限显示对应选项
@@ -175,13 +173,15 @@ const App: React.FC = () => {
                   />
                 </svg>
               </button>
-              <button
-                onClick={() => setFieldDocOpen(true)}
+              <a
+                href="https://github.com/Whyhi666/social-media-dashboard/blob/master/DATA_SPEC.md"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-md transition-colors"
                 title="字段说明"
               >
                 <BookOpen className="w-4 h-4" />
-              </button>
+              </a>
               <span className="hidden md:inline text-[11px] text-slate-400 whitespace-nowrap">
                 更新于 {updatedAtStr}
               </span>
@@ -295,8 +295,6 @@ const App: React.FC = () => {
           <TaskProgressTable tasks={tasks} personalMode={viewMode === 'self'} />
         </div>
       </main>
-
-      <FieldDocModal isOpen={fieldDocOpen} onClose={() => setFieldDocOpen(false)} />
     </div>
   );
 };

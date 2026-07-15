@@ -28,7 +28,7 @@
    - 切换角色时清空 `selectedMemberIds`，MemberSelect 按 role 只显示对应部门。
 3. **`selectedMemberIds` (string[])**：团队成员的多选状态。
    - 数据源严格依赖 `mockOrganization`（树状组织架构）。
-4. **`fieldDocOpen` (boolean)**：字段说明模态框开关。header 的“字段说明”按钮触发，内容来自 `src/fieldDoc.ts`。
+4. **字段说明入口**：header 的“字段说明”按钮（BookOpen 图标）点击后在新标签页打开 `DATA_SPEC.md`（GitHub 仓库源码），前端不内置文档内容。
 
 **数据聚合**（App.tsx useMemo）：
 - self 视图：`mockMemberInfluencerStats[currentUserId]` / `mockMemberWorkflowStats[currentUserId]`。
@@ -61,7 +61,7 @@
 - **来源**：`ff44ef3`（初始化）原版实现，`114828c` 曾改坏，已取回原版。**不要用客户泳道等错误版本覆盖。**
 - **三阶段布局**：投放前 / 投放中 / 投放后，整体包在“业务流转链路”白色模块容器内。三阶段统一 `grid-cols-2 md:grid-cols-3`，卡片大小一致，节点多则换行。
 - **节点清单（2026-07-08 重构）**：
-  - 投放前（9）：待审批流量主申请 / 待沟通合作意向 / 合作意向沟通中 / 可合作待提报·自申请 / 待审批提报（合并线索+达人）/ 待报价 / 待审批报价 / 待流量主确认合作 / 待确认合作。
+  - 投放前（9）：待审批流量主申请 / 待邀约 / 已邀约待回应 / 可合作待提报·自申请 / 待审批提报（合并线索+达人）/ 待报价 / 待审批报价 / 待流量主确认合作 / 待确认合作。
   - 投放中（6）：待执行(待提稿) / 待执行(待重新提稿) / 待审稿 / 待他人审稿 / 待执行(已定稿) / 待完结执行。
   - 投放后（3）：待我审核支出 / 待他人审核支出 / 待申请支付（原“待生成支出”已移除、“待付款”改名）。
 - **me/others 标注**：`getWaitingStatus(waitMarket, waitMedia)` 基于 role 判断节点是「我处理」还是「待对方处理」。
@@ -83,7 +83,7 @@
 - `sticky top-0 z-50 shadow-sm` 吸顶。
 - 中间视图切换按钮组 `flex-1 + justify-center` 居中，右侧只剩角色切换，切换时中间按钮不抖动。
 - 成员筛选在主内容区顶部（team 视图），不在 header。
-- **字段说明入口（2026-07-08 新增）**：左侧刷新按钮旁有“字段说明”按钮（BookOpen 图标），点击弹 `FieldDocModal` 模态框，ESC/遮罩关闭，内容维护在 `src/fieldDoc.ts`。
+- **字段说明入口（2026-07-08）**：左侧刷新按钮旁有“字段说明”按钮（BookOpen 图标），点击在新标签页打开 `DATA_SPEC.md`（GitHub 仓库链接），不内置文档内容、无模态框。
 
 ---
 
@@ -98,8 +98,8 @@
 | 节点 | 颜色取值 (Tailwind) | 视觉意图 |
 | --- | --- | --- |
 | 待审批流量主申请 | `#e2e8f0` (slate-200) | 流量主准入/最初始 |
-| 待沟通合作意向 | `#bfdbfe` (blue-200) | 合作意向萌芽 |
-| 合作意向沟通中 | `#c7d2fe` (indigo-200) | 沟通中 |
+| 待邀约 | `#bfdbfe` (blue-200) | 合作意向萌芽 |
+| 已邀约待回应 | `#c7d2fe` (indigo-200) | 沟通中 |
 | 可合作待提报/自申请 | `#ddd6fe` (violet-200) | 待提报 |
 | 待报价 | `#cbd5e1` (slate-300) | 初始/较轻量 |
 | 待流量主确认合作 | `#93c5fd` (blue-300) | 待外部确认 |
@@ -135,7 +135,7 @@
 4. **查 git 历史再下手**：`114828c`(存档) 曾把 App + 多组件改成错误版本（引用不存在的 `Stage` 等），`ff44ef3`(初始化) 的 WorkflowPipeline/StageDetailModal 是正确实现。修改前用 `git log -- <file>` + `git show <commit>:<file>` 查各版本，**不只看 HEAD**。
 5. **趋势图顺序（2026-07-08）**：三条线（提报数/执行数/确认合作）。recharts 的 Tooltip 顺序不保证跟随 `<Line>` JSX 顺序，须用 `<Tooltip itemSorter={...}>` 按 dataKey 在指定数组中的 index 强制排序；Legend 顺序则跟随 `<Line>` 顺序。
 6. **负载图只放 me 节点（2026-07-08）**：TeamWorkloadChart 仅堆叠本角色需处理的节点，待他人处理节点不计入（业务方明确规则）。
-7. **字段说明用数据文件**：字段说明内容放 `src/fieldDoc.ts`（结构化 `{title, desc, items}`），`FieldDocModal` 只负责渲染，便于非开发人员改文案。
+7. **字段说明链接到文档**：字段说明按钮点击后在新标签页打开 `DATA_SPEC.md`（GitHub 源码），文档由业务方维护，前端不内置内容、无模态框，避免重复维护。
 
 ---
 *文档更新日期：2026-07-08*

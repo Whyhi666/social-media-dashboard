@@ -76,7 +76,7 @@ const TrendChart: React.FC<TrendChartProps> = ({ data, loading }) => {
               }}
               labelFormatter={(label: string) => `日期: ${label}`}
               itemSorter={(item: any) => {
-                const order = ['value1', 'value3', 'value2'];
+                const order = ['value1', 'value2', 'value3'];
                 return order.indexOf(item.dataKey);
               }}
             />
@@ -92,18 +92,18 @@ const TrendChart: React.FC<TrendChartProps> = ({ data, loading }) => {
             />
             <Line
               type="monotone"
-              dataKey="value3"
-              name={dataset.label3}
-              stroke="#f59e0b"
+              dataKey="value2"
+              name={dataset.label2}
+              stroke="#22c55e"
               strokeWidth={2}
               dot={{ r: 3 }}
               activeDot={{ r: 5 }}
             />
             <Line
               type="monotone"
-              dataKey="value2"
-              name={dataset.label2}
-              stroke="#22c55e"
+              dataKey="value3"
+              name={dataset.label3}
+              stroke="#f59e0b"
               strokeWidth={2}
               dot={{ r: 3 }}
               activeDot={{ r: 5 }}

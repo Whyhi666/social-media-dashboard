@@ -86,8 +86,8 @@ export function WorkflowPipeline({ data, personalMode = false, role = 'media', a
   // 简化的文案
   const labels = {
     pendingTrafficOwnerApproval: "待审批流量主申请",
-    pendingCooperationIntention: "待沟通合作意向",
-    pendingCooperationCommunicating: "合作意向沟通中",
+    pendingCooperationIntention: "待邀约",
+    pendingCooperationCommunicating: "已邀约待回应",
     pendingReadyToSubmit: "可合作待提报/自申请",
     pendingApproval: "待审批提报",
     pendingQuote: "待报价",
